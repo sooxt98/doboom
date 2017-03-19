@@ -1,14 +1,20 @@
 #![feature(plugin)]
 #![plugin(rocket_codegen)]
 
+extern crate time;
+extern crate rustc_serialize;
+extern crate jsonwebtoken as jwt;
+
 extern crate rocket;
 extern crate serde_json;
+#[macro_use] extern crate serde_derive;
 #[macro_use] extern crate rocket_contrib;
 
 use rocket::Request;
 use rocket_contrib::{JSON, Value};
 
 mod user;
+mod auth;
 
 #[error(404)]
 fn not_found(req: &Request) -> JSON<Value> {
@@ -34,6 +40,12 @@ fn not_found(req: &Request) -> JSON<Value> {
 fn main() {
     rocket::ignite()
         .mount("/", routes![user::hello])
+
+        // authentication
+        .mount("/", routes![
+            auth::facebook_oauth
+        ])
+
         .catch(errors![not_found])
         .launch();
 }

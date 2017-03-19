@@ -1,10 +1,8 @@
-extern crate time;
-extern crate rustc_serialize;
-extern crate jsonwebtoken as jwt;
-
+use time;
+use rocket_contrib::{JSON, Value};
 use jwt::{ encode, decode, Header, Algorithm };
 
-static KEY: &'static [u8; 16] = "1234567890123456";
+static KEY: &'static str = "secret";
 
 #[derive(Debug, RustcEncodable, RustcDecodable)]
 struct UserToken {
@@ -28,7 +26,7 @@ impl UserToken {
     }
 }
 
-pub fn jwt_generate(user: String, userid: String) -> String {
+fn jwt_generate(user: String, userid: String) -> String {
     let now = time::get_time().sec;
     let payload = UserToken {
         iat: now,
@@ -40,7 +38,18 @@ pub fn jwt_generate(user: String, userid: String) -> String {
     let token = match encode(Header::default(), &payload, KEY.as_ref()) {
         Ok(T) => T,
         Err(reason) => panic!(reason)
-    }
+    };
 
     token
+}
+
+#[derive(Serialize, Deserialize, Debug)]
+struct OauthCode {
+    code: String
+}
+
+#[post("/auth/facebook", format="application/json", data="<oauth_code>")]
+fn facebook_oauth(oauth_code: JSON<OauthCode>) -> JSON<Value> {
+    println!("See what you got: {:?}", oauth_code.code);
+    JSON(json!({ "status": true, "message": "just test" }))
 }
