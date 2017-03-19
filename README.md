@@ -1,1 +1,2 @@
-# doboom
+# DoBoom Server
+> Let's party
