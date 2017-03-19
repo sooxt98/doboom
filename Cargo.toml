@@ -6,3 +6,10 @@ authors = ["zypeh <zypeh.geek@gmail.com>"]
 [dependencies]
 rocket = "0.2.2"
 rocket_codegen = "0.2.2"
+serde = "0.9"
+serde_json = "0.9"
+serde_derive = "0.9"
+
+[dependencies.rocket_contrib]
+default-features = false
+features = ["json"]
