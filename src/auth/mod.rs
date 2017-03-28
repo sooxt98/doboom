@@ -2,6 +2,10 @@ use time;
 use rocket_contrib::{JSON, Value};
 use jwt::{ encode, decode, Header, Algorithm };
 
+mod facebook;
+// TODO: mod twitter;
+// TODO: mod google;
+
 static KEY: &'static str = "secret";
 
 #[derive(Debug, RustcEncodable, RustcDecodable)]
@@ -36,20 +40,63 @@ fn jwt_generate(user: String, userid: String) -> String {
     };
 
     let token = match encode(Header::default(), &payload, KEY.as_ref()) {
-        Ok(T) => T,
+        Ok(t) => t,
         Err(reason) => panic!(reason)
     };
 
     token
 }
 
+/// This is what the oauth function received.
 #[derive(Serialize, Deserialize, Debug)]
 struct OauthCode {
+    /// The authorized client code sent from client-side.
     code: String
 }
 
 #[post("/auth/facebook", format="application/json", data="<oauth_code>")]
 fn facebook_oauth(oauth_code: JSON<OauthCode>) -> JSON<Value> {
-    println!("See what you got: {:?}", oauth_code.code);
-    JSON(json!({ "status": true, "message": "just test" }))
+    let result = match facebook::auth() {
+        Ok(token) => json!({
+            "success": true,
+            "accessToken": token
+        }),
+        Err(reason) => json!({
+            "success": false,
+            "message": reason
+        })
+    };
+    JSON(result)
 }
+
+/* TODO
+#[post("/auth/twitter", format="application/json", data="<oauth_code")]
+fn twitter_oauth(oauth_code: JSON<OauthCode>) -> JSON<Value> {
+    let result = match twiter::auth(oauth_code.code) {
+        Ok(token) => json!({
+            "success": true,
+            "accessToken": token
+        }),
+        Err(reason) => json!({
+            "success": false,
+            "message": reason
+        })
+    };
+    JSON(result)
+}
+
+#[post("/auth/google", format="application/json", data="<oauth_code")]
+fn google_oauth(oauth_code: JSON<OauthCode>) -> JSON<Value> {
+    let result = match google::auth(oauth_code.code) {
+        Ok(token) => json!({
+            "success": true,
+            "accessToken": token
+        }),
+        Err(reason) => json!({
+            "success": false,
+            "message": reason
+        })
+    };
+    JSON(result)
+}
+**/
