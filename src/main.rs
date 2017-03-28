@@ -2,11 +2,12 @@
 #![plugin(rocket_codegen)]
 
 extern crate time;
-extern crate rustc_serialize;
-extern crate jsonwebtoken as jwt;
-
+extern crate ring;
+extern crate hyper;
 extern crate rocket;
 extern crate serde_json;
+extern crate rustc_serialize;
+extern crate jsonwebtoken as jwt;
 #[macro_use] extern crate serde_derive;
 #[macro_use] extern crate rocket_contrib;
 
@@ -16,9 +17,9 @@ use rocket_contrib::{JSON, Value};
 mod user;
 mod auth;
 
+/// 404 Not found catcher
 #[error(404)]
 fn not_found(req: &Request) -> JSON<Value> {
-    print!("{:?}", req.content_type());
     let resp = match req.content_type() {
         // Check if it's application/json typed
         Some(ref ctxt) if !ctxt.is_json() => {
@@ -37,6 +38,15 @@ fn not_found(req: &Request) -> JSON<Value> {
     JSON(resp)
 }
 
+/// 400 Bad Request catcher
+#[error(400)]
+fn bad_request() -> JSON<Value> {
+    JSON(json!({
+        "success": false,
+        "message": "The request could not be understood by the server due to malformed syntax."
+    }))
+}
+
 fn main() {
     rocket::ignite()
         .mount("/", routes![user::hello])
@@ -46,6 +56,10 @@ fn main() {
             auth::facebook_oauth
         ])
 
-        .catch(errors![not_found])
+        .catch(errors![
+            not_found,
+            bad_request,
+        ])
+
         .launch();
 }
