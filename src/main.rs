@@ -31,7 +31,7 @@ struct DoboomConfig {
 
 fn main() {
     // Read configuration from the project root directory
-    dotenv::from_filename("config.env").expect("Failed to read `.env` file");
+    dotenv::dotenv().expect("Failed to read `.env` file");
 
     println!("📝  Printing the runtime configuration.");
     match envy::from_env::<DoboomConfig>() {
@@ -46,7 +46,7 @@ fn main() {
             //auth::jwt_auth,
             //auth::google_oauth,
             //auth::twitter_oauth,
-            auth::facebook_oauth,
+            auth::facebook_oauth
         ])
 
         // user related API
