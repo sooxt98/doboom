@@ -66,6 +66,7 @@ fn main() {
             catchers::not_found,
             catchers::bad_request,
             catchers::unauthorized,
+            catchers::forbidden,
         ])
 
         .launch();

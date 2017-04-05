@@ -39,3 +39,12 @@ fn unauthorized() -> JSON<Value> {
         "message": "Missing or invalid authentication."
     }))
 }
+
+/// 403 Forbidden
+fn forbidden(req: &Request) -> JSON<Value> {
+    JSON(json!({
+        "success": false,
+        "message": format!("'{}' is forbidden for user", req.uri())
+    }))
+}
+
