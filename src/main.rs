@@ -4,20 +4,28 @@
 extern crate time;
 extern crate ring;
 extern crate envy;
+extern crate r2d2;
 extern crate hyper;
 extern crate rocket;
 extern crate dotenv;
 extern crate serde_json;
+extern crate r2d2_diesel;
 extern crate rustc_serialize;
 extern crate jsonwebtoken as jwt;
 #[macro_use] extern crate diesel;
+#[macro_use] extern crate lazy_static;
 #[macro_use] extern crate serde_derive;
 #[macro_use] extern crate rocket_contrib;
 #[macro_use] extern crate diesel_codegen;
 
-mod user;
 mod auth;
 mod catchers;
+mod database;
+
+mod user;
+// mod post;
+// mod product;
+// mod organization;
 
 /// This is Doboom server's runtime configurations
 /// Edit ../config.env to change the settings.
@@ -32,7 +40,7 @@ struct DoboomConfig {
 fn main() {
     // Read configuration from the project root directory
     dotenv::dotenv().expect("Failed to read `.env` file");
-
+    
     println!("📝  Printing the runtime configuration.");
     match envy::from_env::<DoboomConfig>() {
         Ok(config) => println!("{:?}", config),
