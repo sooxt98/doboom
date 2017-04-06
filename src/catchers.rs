@@ -41,6 +41,7 @@ fn unauthorized() -> JSON<Value> {
 }
 
 /// 403 Forbidden
+#[error(403)]
 fn forbidden(req: &Request) -> JSON<Value> {
     JSON(json!({
         "success": false,
