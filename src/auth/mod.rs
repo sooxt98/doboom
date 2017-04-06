@@ -2,6 +2,7 @@ use time;
 use rocket_contrib::{JSON, Value};
 use jwt::{ encode, decode, Header, Algorithm };
 
+mod hashids;
 mod facebook;
 // TODO: mod twitter;
 // TODO: mod google;
@@ -30,7 +31,7 @@ impl UserToken {
     }
 }
 
-fn jwt_generate(user: String, userid: String) -> String {
+pub fn jwt_generate(user: String, userid: String) -> String {
     let now = time::get_time().sec;
     let payload = UserToken {
         iat: now,
@@ -45,6 +46,22 @@ fn jwt_generate(user: String, userid: String) -> String {
     };
 
     token
+}
+
+/// This is what the refresh token received.
+#[derive(Serialize, Deserialize, Debug)]
+struct Credential {
+    accessToken: String
+}
+
+/// This is used to generate the JWT token, sign in mode
+#[post("/refresh_token", format="application/json", data="<access_token>")]
+fn refresh_token(access_token: JSON<Credential>) -> JSON<Value> {
+    JSON(json!({
+        "success": true,
+        "access_token": "12345678"
+    }))
+    //let token_data = decode::<UserToken>(&access_token, KEY, Algorithm::HS256).unwrap();
 }
 
 /// This is what the oauth function received.
