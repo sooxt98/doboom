@@ -7,21 +7,24 @@ extern crate envy;
 extern crate r2d2;
 extern crate hyper;
 extern crate rocket;
+extern crate diesel;
 extern crate dotenv;
 extern crate serde_json;
 extern crate r2d2_diesel;
 extern crate rustc_serialize;
 extern crate jsonwebtoken as jwt;
-#[macro_use] extern crate diesel;
 #[macro_use] extern crate lazy_static;
 #[macro_use] extern crate serde_derive;
 #[macro_use] extern crate rocket_contrib;
-#[macro_use] extern crate diesel_codegen;
 
+extern crate database;
+
+/// Funtionality
+mod db;
 mod auth;
 mod catchers;
-mod database;
 
+/// API definitions
 mod user;
 // mod post;
 // mod product;
@@ -57,6 +60,10 @@ fn main() {
             auth::facebook_oauth
         ])
 
+        .mount("/test/", routes![
+            user::count,
+        ])
+
         // user related API
         .mount("/v1", routes![
             user::hello,
@@ -71,3 +78,4 @@ fn main() {
 
         .launch();
 }
+

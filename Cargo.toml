@@ -3,6 +3,14 @@ name = "doboom"
 version = "0.1.0"
 authors = ["zypeh <zypeh.geek@gmail.com>"]
 
+[[bin]]
+name = "doboom"
+path = "src/main.rs"
+
+[lib]
+name = "database"
+path = "src/database/lib.rs"
+
 [dependencies]
 time = "*"
 hyper = "0.10.5"
