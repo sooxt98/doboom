@@ -9,6 +9,9 @@ extern crate hyper;
 extern crate rocket;
 extern crate diesel;
 extern crate dotenv;
+extern crate futures;
+extern crate hyper_tls;
+extern crate tokio_core;
 extern crate serde_json;
 extern crate r2d2_diesel;
 extern crate rustc_serialize;
@@ -43,7 +46,7 @@ struct DoboomConfig {
 fn main() {
     // Read configuration from the project root directory
     dotenv::dotenv().expect("Failed to read `.env` file");
-    
+
     println!("📝  Printing the runtime configuration.");
     match envy::from_env::<DoboomConfig>() {
         Ok(config) => println!("{:?}", config),
@@ -58,10 +61,6 @@ fn main() {
             //auth::google_oauth,
             //auth::twitter_oauth,
             auth::facebook_oauth
-        ])
-
-        .mount("/test/", routes![
-            user::count,
         ])
 
         // user related API
