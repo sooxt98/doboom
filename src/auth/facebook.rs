@@ -1,4 +1,5 @@
 
+use std::env;
 use futures::future;
 use std::str::FromStr;
 use ring::{digest, hmac};
@@ -26,10 +27,9 @@ struct GraphResp {
 
 /// Communicate with the facebook
 pub fn auth(code: String) -> Result<String, String> {
-    let client_id = "123";
-    let client_secret = "456";
-    let redirect_uri = "789";
-    let app_secret = "123456";
+    let client_id = env::var("FACEBOOK_APPID").expect("FACEBOOK_APPID must be set");
+    let client_secret = env::var("FACEBOOK_APPSECRET").expect("FACEBOOK_APPSECRET mush be set");
+    let redirect_uri = env::var("REDIRECT_URL").expect("REDIRECT_URI must be set");
 
     let fields = vec!["email", "id", "last_name", "picture.type(large)"];
     let accessTokenUrl = "https://graph.facebook.com/oauth/access_token";
@@ -68,7 +68,7 @@ pub fn auth(code: String) -> Result<String, String> {
             let s = String::from_utf8(chunks).unwrap();
             let code_result_json: CodeResp = from_str(&s).unwrap();
             
-            let hmac = fb_digest(code_result_json.access_token.as_str(), app_secret);
+            let hmac = fb_digest(code_result_json.access_token.as_str(), client_secret.as_str());
             let graphApiUri = Uri::from_str(&format!("{}?access_token={}&appsecret_proof={}",
                                                     graphApiUrl
                                                     , code_result_json.access_token

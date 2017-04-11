@@ -4,8 +4,8 @@ use jwt::{ encode, decode, Header, Algorithm };
 
 mod hashids;
 mod facebook;
-// TODO: mod twitter;
-// TODO: mod google;
+mod twitter;
+mod google;
 
 static KEY: &'static str = "secret";
 
@@ -87,10 +87,9 @@ fn facebook_oauth(oauth_code: JSON<OauthCode>) -> JSON<Value> {
     JSON(result)
 }
 
-/* TODO
-#[post("/auth/twitter", format="application/json", data="<oauth_code")]
+#[post("/auth/twitter", format="application/json", data="<oauth_code>")]
 fn twitter_oauth(oauth_code: JSON<OauthCode>) -> JSON<Value> {
-    let result = match twiter::auth(oauth_code.code) {
+    let result = match twitter::auth(oauth_code.code.to_owned()) {
         Ok(token) => json!({
             "success": true,
             "accessToken": token
@@ -103,9 +102,9 @@ fn twitter_oauth(oauth_code: JSON<OauthCode>) -> JSON<Value> {
     JSON(result)
 }
 
-#[post("/auth/google", format="application/json", data="<oauth_code")]
+#[post("/auth/google", format="application/json", data="<oauth_code>")]
 fn google_oauth(oauth_code: JSON<OauthCode>) -> JSON<Value> {
-    let result = match google::auth(oauth_code.code) {
+    let result = match google::auth(oauth_code.code.to_owned()) {
         Ok(token) => json!({
             "success": true,
             "accessToken": token
@@ -117,4 +116,4 @@ fn google_oauth(oauth_code: JSON<OauthCode>) -> JSON<Value> {
     };
     JSON(result)
 }
-**/
+
