@@ -1,6 +1,7 @@
 #![feature(plugin)]
 #![plugin(rocket_codegen)]
 
+extern crate url;
 extern crate time;
 extern crate ring;
 extern crate envy;
@@ -33,33 +34,16 @@ mod user;
 // mod product;
 // mod organization;
 
-/// This is Doboom server's runtime configurations
-/// Edit ../config.env to change the settings.
-#[derive(Deserialize, Debug)]
-struct DoboomConfig {
-    database_url: String,
-    // facebook_appsecret: String,
-    // twitter: String,
-    // google: String,
-}
-
 fn main() {
     // Read configuration from the project root directory
-    dotenv::dotenv().expect("Failed to read `.env` file");
-
-    println!("📝  Printing the runtime configuration.");
-    match envy::from_env::<DoboomConfig>() {
-        Ok(config) => println!("{:?}", config),
-        Err(reason) => println!("Couldn't get the config ({})", reason),
-    };
-    println!("");
+    dotenv::dotenv().expect("Failed to read `.env` file.");
 
     rocket::ignite()
         // authentication
         .mount("/", routes![
             //auth::jwt_auth,
-            //auth::google_oauth,
-            //auth::twitter_oauth,
+            auth::google_oauth,
+            auth::twitter_oauth,
             auth::facebook_oauth
         ])
 
