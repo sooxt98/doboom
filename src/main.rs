@@ -42,6 +42,7 @@ fn main() {
         // authentication
         .mount("/", routes![
             //auth::jwt_auth,
+            auth::refresh_token,
             auth::google_oauth,
             auth::twitter_oauth,
             auth::facebook_oauth

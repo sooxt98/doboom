@@ -1,6 +1,7 @@
 use time;
 use rocket_contrib::{JSON, Value};
-use jwt::{ encode, decode, Header, Algorithm };
+use jwt::errors::{ErrorKind};
+use jwt::{encode, decode, Header, Algorithm, Validation};
 
 mod hashids;
 mod facebook;
@@ -9,14 +10,14 @@ mod google;
 
 static KEY: &'static str = "secret";
 
-#[derive(Debug, RustcEncodable, RustcDecodable)]
+#[derive(Serialize, Deserialize, Debug)]
 struct UserToken {
-    // issued at
-    iat: i64,
-    // expiration
-    exp: i64,
-    user: String,
-    userid: String,
+    // Username is the only key, drop hashids maybe ?
+    username: String,
+    avatar: String,
+    verified: bool,
+    /// Prevent faked accounts.
+    swag_verified: Option<bool>,
 }
 
 // only has_role() is used in this demo
@@ -27,26 +28,19 @@ impl UserToken {
     }
 
     fn is_claimed_user(&self, claimed_user: String) -> bool {
-        self.userid == claimed_user
+        self.username == claimed_user
     }
 }
 
-pub fn jwt_generate(user: String, userid: String) -> String {
+/////////////////////////////////////////////////
+
+fn jwt_generate(payload: UserToken) -> Result<String, String> {
     let now = time::get_time().sec;
-    let payload = UserToken {
-        iat: now,
-        exp: now + (60 * 60 * 24 * 7), // One week time range
-        user: user,
-        userid: userid
-    };
-
-    let token = match encode(Header::default(), &payload, KEY.as_ref()) {
-        Ok(t) => t,
-        Err(reason) => panic!(reason)
-    };
-
-    token
+    
+    encode(&Header::default(), &payload, KEY.as_ref())?
 }
+
+///////////////////////////////////////////////////
 
 /// This is what the refresh token received.
 #[derive(Serialize, Deserialize, Debug)]
@@ -57,6 +51,11 @@ struct Credential {
 /// This is used to generate the JWT token, sign in mode
 #[post("/refresh_token", format="application/json", data="<access_token>")]
 fn refresh_token(access_token: JSON<Credential>) -> JSON<Value> {
+
+    let decoded_data = match decode::<UserToken>(&access_token,
+                                                 key.as_ref(),
+                                                 Algorithm::HS256,
+
     JSON(json!({
         "success": true,
         "access_token": "12345678"
