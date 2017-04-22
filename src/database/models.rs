@@ -143,5 +143,5 @@ pub struct UpdatedProduct {
 use super::schema::posts;
 use super::schema::users;
 use super::schema::comments;
+use super::schema::products;
 use super::schema::organizations;
-use super::schema::product;
