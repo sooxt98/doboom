@@ -29,10 +29,9 @@ mod auth;
 mod catchers;
 
 /// API definitions
-mod user;
-// mod post;
-// mod product;
-// mod organization;
+mod endpoints;
+
+use endpoints::api_v1;
 
 fn main() {
     // Read configuration from the project root directory
@@ -41,16 +40,16 @@ fn main() {
     rocket::ignite()
         // authentication
         .mount("/", routes![
-            //auth::jwt_auth,
+            auth::jwt_auth,
             auth::refresh_token,
             auth::google_oauth,
             auth::twitter_oauth,
             auth::facebook_oauth
         ])
 
-        // user related API
-        .mount("/v1", routes![
-            user::hello,
+        // functions
+        .mount("/", routes![
+            api_v1::users::hello,
         ])
 
         .catch(errors![
