@@ -33,8 +33,6 @@ pub struct UpdatedUser {
     pub avatar: Option<String>,
 }
 
-/////////////////////////////////////////////////
-
 #[derive(Identifiable, Queryable, Associations, Serialize, Deserialize)]
 #[belongs_to(User)]
 #[has_many(comments)]
@@ -58,22 +56,19 @@ pub struct UpdatedPost {
     pub body: Option<String>,
 }
 
-/////////////////////////////////////////////////
-
 #[derive(Identifiable, Queryable, Associations, Serialize, Deserialize)]
 #[belongs_to(User)]
 #[belongs_to(Post)]
 pub struct Comment {
     pub id: i32,
     pub body: String,
-    pub published: bool,
     pub user_id: i64,
     pub post_id: i32,
 }
 
 #[derive(Insertable, Serialize, Deserialize)]
 #[table_name = "comments"]
-pub struct NewComment {
+pub struct NewPostComment {
     pub body: String,
     pub user_id: i64,
     pub post_id: i32,
@@ -81,14 +76,9 @@ pub struct NewComment {
 
 #[derive(Serialize, Deserialize, AsChangeset)]
 #[table_name = "comments"]
-pub struct UpdatedComment {
+pub struct UpdatedPostComment {
     pub body: Option<String>,
-    pub published: Option<bool>,
-    pub user_id: Option<i64>,
-    pub post_id: Option<i32>,
 }
-
-/////////////////////////////////////////////////
 
 #[derive(Identifiable, Queryable, Associations, Serialize, Deserialize)]
 #[belongs_to(User)]
@@ -102,7 +92,7 @@ pub struct Organizations {
 
 #[derive(Insertable, Serialize, Deserialize)]
 #[table_name = "organizations"]
-pub struct NewPost {
+pub struct NewOrganization {
     pub description: String,
     pub user_id: Option<i64>,
 }

@@ -117,38 +117,38 @@ impl DbConfig {
 
         let adapter = match env_toml.get("adapter") {
             None => "postgres",
-            Some(adapter) => adapter.as_str().expect("invalid adapter: must me a string"),
+            Some(adapter) => adapter.as_str().expect("invalid adapter: must be a string"),
         };
 
         let encoding = match env_toml.get("encoding") {
             None => "utf8",
-            Some(encoding) => encoding.as_str().expect("invalid encoding: must me a string"),
+            Some(encoding) => encoding.as_str().expect("invalid encoding: must be a string"),
         };
 
         let database = match env_toml.get("database") {
             None => {
                 return Err(DbConfigError::Parsing(String::from("'database' key does not exist.")))
             }
-            Some(database) => database.as_str().expect("invalid database: must me a string"),
+            Some(database) => database.as_str().expect("invalid database: must be a string"),
         };
 
         let username = match env_toml.get("username") {
             None => {
                 return Err(DbConfigError::Parsing(String::from("'username' key does not exist.")))
             }
-            Some(username) => username.as_str().expect("invalid username: must me a string"),
+            Some(username) => username.as_str().expect("invalid username: must be a string"),
         };
 
         let password = match env_toml.get("password") {
             None => {
                 return Err(DbConfigError::Parsing(String::from("'password' key does not exist.")))
             }
-            Some(password) => password.as_str().expect("invalid password: must me a string"),
+            Some(password) => password.as_str().expect("invalid password: must be a string"),
         };
 
         let host = match env_toml.get("host") {
             None => "localhost",
-            Some(host) => host.as_str().expect("invalid host: must me a string"),
+            Some(host) => host.as_str().expect("invalid host: must be a string"),
         };
 
         let port = match env_toml.get("port") {
