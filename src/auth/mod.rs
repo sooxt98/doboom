@@ -3,7 +3,7 @@ use rocket_contrib::{JSON, Value};
 use jwt::errors::{ErrorKind};
 use jwt::{encode, decode, Header, Algorithm, Validation};
 
-mod hashids;
+mod jwt;
 mod facebook;
 mod twitter;
 mod google;
@@ -12,12 +12,15 @@ static KEY: &'static str = "secret";
 
 #[derive(Serialize, Deserialize, Debug)]
 struct UserToken {
+    name: String,
     // Username is the only key, drop hashids maybe ?
     username: String,
     avatar: String,
     verified: bool,
     /// Prevent faked accounts.
     swag_verified: Option<bool>,
+    /// Expiry datetime
+    exp: i64,
 }
 
 // only has_role() is used in this demo
@@ -32,12 +35,14 @@ impl UserToken {
     }
 }
 
-/////////////////////////////////////////////////
-
-fn jwt_generate(payload: UserToken) -> Result<String, String> {
-    let now = time::get_time().sec;
-    
-    encode(&Header::default(), &payload, KEY.as_ref())?
+// Generate_token, creates the jwt key
+pub fn generate_token(username: User) -> Result<String, errors::Error> {
+    let key = env::var("SECRET_KEY");
+    let jwt = JWT {
+        user_id: _user_id,
+        expires_at: sixty_days_from_now().timestamp()
+    };
+    encode(Header::default(), &jwt, key.unwrap().as_ref())
 }
 
 ///////////////////////////////////////////////////
