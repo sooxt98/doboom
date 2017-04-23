@@ -1,27 +1,102 @@
-extern crate r2d2;
-extern crate dotenv;
+extern crate r2d2;;
 extern crate r2d2_diesel;
 #[macro_use] extern crate diesel;
 #[macro_use] extern crate diesel_codegen;
 
 use std::env;
-use dotenv::dotenv;
+use std::fmt;
+use std::error;
+use r2d2::GetTimeout;
+use config::DbConfig;
 use r2d2::{Pool, Config};
 use diesel::pg::PgConnection;
 use r2d2_diesel::ConnectionManager;
+use diesel::result::Error as DieselError;
 
 pub mod schema;
 pub mod models;
 
-// This will create a pool of database connection. Technically it's a
-// thread pool of database connections to postgres in case we need to
-// generate a connection each time a request received, which is inefficient.
-pub fn establish_db_pool() -> Pool<ConnectionManager<PgConnection>> {
-    dotenv().ok();
+#[derive(Debug)]
+pub enum DbError {
+    Db(DieselError),
+    PoolInitialization(InitializationError),
+    PoolTimeout(GetTimeout),
+}
 
-    let database_url = env::var("DATABASE_URL").expect("DATABASE_URL must be set");
-    let config = Config::default();
-    let manager = ConnectionManager::<PgConnection>::new(database_url);
+impl fmt::Display for DbError {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        match *self {
+            DbError::Db(_) => write!(f, "Db error"),
+            DbError::PoolInitialization(_) => write!(f, "Db pool could not be initialized"),
+            DbError::PoolTimeout(_) => write!(f, "Timeout while trying to access the Db Pool")
+        }
+    }
+}
 
-    Pool::new(config, manager).expect("Failed to create pool of database connection")
+impl error::Error for DbError {
+    fn description(&self) -> &str {
+        match *self {
+            DbError::Db(ref err) => err.description(),
+            DbError::PoolInitialization(ref err) => err.description(),
+            DbError::PoolTimeout(ref err) => err.description(),
+        }
+    }
+
+    fn cause(&self) -> Option<&error::Error> {
+        match *self {
+            DbError::Db(ref err) => Some(err),
+            DbError::PoolInitialization(ref err) => Some(err),
+            DbError::PoolTimeout(ref err) => Some(err),
+        }
+    }
+}
+
+impl From<DieselError> for DbError {
+    fn from(err: DieselError) -> DbError {
+        DbError::Db(err)
+    }
+}
+
+impl From<InitializationError> for DbError {
+    fn from(err: InitializationError) -> DbError {
+        DbError::PoolInitialization(err)
+    }
+}
+
+impl From<GetTimeout> for DbError {
+    fn from(err: GetTimeout) -> DbError {
+        DbError::PoolTimeout(err)
+    }
+}
+
+/// Database connection instance
+pub struct Db {
+    pub pool: Option<Pool<ConnectionManager<PgConnection>>>,
+    pub config: DbConfig,
+}
+
+type DbPool = Pool<ConnectionManager<PgConnection>>;
+
+impl Db {
+    pub fn new(config: DbConfig) -> Db {
+        Db {
+            pool: None,
+            config: config
+        }
+    }
+
+    /// Create a pooled connection of database using the DbConfig
+    pub fn init(&mut self) -> Result<(), DbError> {
+        let database_url = self.config.url();
+        let config = Config::default();
+        let manager = ConnectionManager::<PgConnection>::new(database_url);
+        let pool = Pool::new(config, manager)?;
+        self.pool = Some(pool);
+        Ok(())
+    }
+
+    /// Get the database connection pool from the DbPool instance
+    pub fn pool(&self) -> &DbPool {
+        self.pool.as_ref().expect("Db pool not available. Maybe call `init()` first ?")
+    }
 }
