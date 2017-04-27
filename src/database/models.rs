@@ -6,6 +6,7 @@
 pub struct User {
     pub id: i64,
     pub email: String,
+    pub email_verified: bool,
     pub name: String,
     pub username: String,
 
@@ -83,23 +84,27 @@ pub struct UpdatedPostComment {
 #[derive(Identifiable, Queryable, Associations, Serialize, Deserialize)]
 #[belongs_to(User)]
 #[has_many(comments)]
-pub struct Organizations {
+pub struct Organization {
     pub id: i32,
+    pub avatar: String,
+    pub name: String,
     pub description: String,
     pub published: bool,
-    pub user_id: Option<i64>,
+    pub user_id: Vec<i64>,
 }
 
 #[derive(Insertable, Serialize, Deserialize)]
 #[table_name = "organizations"]
 pub struct NewOrganization {
+    pub name: String,
     pub description: String,
-    pub user_id: Option<i64>,
+    pub user_id: Vec<i64>,
 }
 
 #[derive(Serialize, Deserialize, AsChangeset)]
 #[table_name = "organizations"]
 pub struct UpdatedOrganization {
+    pub name: Option<String>,
     pub description: Option<String>,
 }
 

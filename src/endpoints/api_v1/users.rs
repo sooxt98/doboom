@@ -14,6 +14,9 @@ use endpoints::helpers::*;
 use endpoint_error::EndpointResult;
 use endpoints::pagination::Pagination;
 
+use endpoints::api_v1::organizations::{list_organizations, OrganizationProfile};
+use endpoints::api_v1::products::{list_product, ProductProfile};
+
 #[derive(Deserialize, Serialize)]
 pub struct UserProfile {
     pub user: String,
@@ -21,12 +24,12 @@ pub struct UserProfile {
 
     pub avatar: Option<String>,
 
-    pub organizations: Option<Vec<String>>,
-    pub products: Option<Vec<String>>,
+    pub organizations: Vec<OrganizationProfile>,
+    pub products: Vec<ProductProfile>,
 }
 
 /// Return the user profile for the user profile page.
-#[get("/user/profile/<username>", format = "application/json")]
+#[get("/user/profile/<username>", data="name"format = "application/json")]
 fn get_profile(db: State<DB>, username: String) -> EndpointResult<JSON<UserProfile>> {
     let conn = &*db.pool().get()?;
 
@@ -36,8 +39,8 @@ fn get_profile(db: State<DB>, username: String) -> EndpointResult<JSON<UserProfi
         user: user.name,
         username: user.username,
         avatar: user.avatar,
-        organization: None, // unimplemnted
-        products: None,
+        organization: list_organizations(db, user.username),
+        products: list_product(db, user.username),
     };
 
     Ok(JSON(profile))
@@ -57,30 +60,12 @@ fn edit_profile(db: State<DB>, req: &Request) -> EndpointResult<JSON<UserProfile
                 user: user.name,
                 username: user.username,
                 avatar: user.avatar,
-                organizations: organization_query(db, user.username),
-                products: product_query(db, user.username),
+                organizations: list_organizations(db, user.username),
+                products: list_product(db, user.username),
             };
 
             Ok(JSON(profile))
         }
         None => Response::build().status(Status::Unauthorized).ok()
     }
-}
-
-/// Query all the organization from a username given
-fn organization_query(db: &Db, username: String, pagination: Option<Pagination>)
-    -> Option<Vec<Organization>>
-{
-    let conn = &*db.pool().get()?;
-    // TODO
-    None
-}
-
-/// Query all the product from a username given
-fn product_query(db: &Db, username: String, pagination: Option<Pagination>)
-    -> Option<Vec<Product>>
-{
-    let conn = &*db.pool().get()?;
-    // TODO
-    None
 }
