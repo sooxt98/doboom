@@ -1,12 +1,22 @@
 use time;
-use rocket_contrib::{JSON, Value};
 
 mod jwt;
 mod facebook;
 mod twitter;
 mod google;
 
-use jwt::errors::{ErrorKind};
+use diesel::prelude::*;
+use database::models::User;
+use database::schema::users::dsl::*;
+
+use rocket::{State, Response};
+use rocket_contrib::{JSON, Value};
+
+use endpoints::helpers::*;
+use endpoints_error::EndpointResult;
+use endpoints::pagination::Pagination;
+
+use jwt::errors::{self, ErrorKind};
 use jwt::{ encode, decode, Header, Algorithm, Validation };
 
 static KEY: &'static str = "secret";
@@ -17,9 +27,11 @@ struct UserToken {
     // Username is the only key, drop hashids maybe ?
     username: String,
     avatar: String,
-    verified: bool,
+    //verified: bool,
     /// Prevent faked accounts.
-    swag_verified: Option<bool>,
+    //swag_verified: Option<bool>,
+    /// Issued at
+    iat: i64,
     /// Expiry datetime
     exp: i64,
 }
@@ -37,13 +49,16 @@ impl UserToken {
 }
 
 // Generate_token, creates the jwt key
-pub fn generate_token(username: User) -> Result<String, errors::Error> {
-    let key = env::var("SECRET_KEY");
-    let jwt = JWT {
-        user_id: _user_id,
-        expires_at: sixty_days_from_now().timestamp()
+pub fn generate_token(user: User) -> Result<String, errors::Error> {
+    let now = time::get_time().sec;
+    let payload = UserToken {
+        name: user.name,
+        username: user.username,
+        //avatar: user.avatar,
+        iat: now,
+        exp: now + (60 * 60 * 2) // 2 hours
     };
-    encode(&Header::default(), &jwt, key.unwrap().as_ref())
+    encode(&Header::default(), &payload, KEY)
 }
 
 /// This is what the refresh token received.
@@ -73,7 +88,7 @@ struct OauthCode {
 }
 
 #[post("/auth/facebook", format="application/json", data="<oauth_code>")]
-fn facebook_oauth(oauth_code: JSON<OauthCode>) -> JSON<Value> {
+fn facebook_oauth(oauth_code: JSON<OauthCode>) -> EndpointResult<JSON<Value>> {
     let result = match facebook::auth(oauth_code.0.code.to_owned()) {
         Ok(token) => json!({
             "success": true,
