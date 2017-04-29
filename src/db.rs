@@ -1,32 +1,97 @@
-use rocket::Request;
-use rocket::http::Status;
+use std::fmt;
+use std::error;
+
 use diesel::pg::PgConnection;
+use r2d2::Config;
+use r2d2::{ Pool, InitializationError };
 use r2d2_diesel::ConnectionManager;
-use rocket::Outcome::{Success, Failure};
-use rocket::request::{Outcome, FromRequest};
-use r2d2::{Pool, PooledConnection, GetTimeout};
 
-use database::establish_db_pool;
+use config::DbConfig;
 
-lazy_static! {
-    pub static ref DB_POOL:
-        Pool<ConnectionManager<PgConnection>> = establish_db_pool();
+use diesel::result::Error as DieselError;
+use r2d2::GetTimeout;
+
+#[derive(Debug)]
+pub enum DbError {
+    Db(DieselError),
+    PoolInitialization(InitializationError),
+    PoolTimeout(GetTimeout),
 }
 
-pub struct DB(PooledConnection<ConnectionManager<PgConnection>>);
-
-impl DB {
-    pub fn conn(&self) -> &PgConnection {
-        &*self.0
-    }
-}
-
-impl<'a, 'r> FromRequest<'a, 'r> for DB {
-    type Error = GetTimeout;
-    fn from_request(_: &'a Request<'r>) -> Outcome<Self, Self::Error> {
-        match DB_POOL.get() {
-            Ok(conn) => Success(DB(conn)),
-            Err(why) => Failure((Status::InternalServerError, why)),
+impl fmt::Display for DbError {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        match *self {
+            DbError::Db(_) => write!(f, "Db error"),
+            DbError::PoolInitialization(_) => write!(f, "Db pool could not be initialized"),
+            DbError::PoolTimeout(_) => write!(f, "Timeout while trying to access the Db Pool"),
         }
     }
 }
+
+impl error::Error for DbError {
+    fn description(&self) -> &str {
+        match *self {
+            DbError::Db(ref err) => err.description(),
+            DbError::PoolInitialization(ref err) => err.description(),
+            DbError::PoolTimeout(ref err) => err.description(),
+        }
+    }
+
+    fn cause(&self) -> Option<&error::Error> {
+        match *self {
+            DbError::Db(ref err) => Some(err),
+            DbError::PoolInitialization(ref err) => Some(err),
+            DbError::PoolTimeout(ref err) => Some(err),
+        }
+    }
+}
+
+impl From<DieselError> for DbError {
+    fn from(err: DieselError) -> DbError {
+        DbError::Db(err)
+    }
+}
+
+impl From<InitializationError> for DbError {
+    fn from(err: InitializationError) -> DbError {
+        DbError::PoolInitialization(err)
+    }
+}
+
+impl From<GetTimeout> for DbError {
+    fn from(err: GetTimeout) -> DbError {
+        DbError::PoolTimeout(err)
+    }
+}
+
+type DbPool = Pool<ConnectionManager<PgConnection>>;
+
+pub struct Db {
+    pub pool: Option<DbPool>,
+    pub config: DbConfig,
+}
+
+impl Db {
+    pub fn new(config: DbConfig) -> Db {
+        Db {
+            pool: None,
+            config: config,
+        }
+    }
+
+    pub fn init(&mut self) -> Result<(), DbError> {
+        let db_url = self.config.url();
+        let config = Config::default();
+        let manager = ConnectionManager::<PgConnection>::new(db_url);
+        let pool = Pool::new(config, manager)?;
+
+        self.pool = Some(pool);
+
+        Ok(())
+    }
+
+    pub fn pool(&self) -> &DbPool {
+        self.pool.as_ref().expect("Db Pool not available. Maybe call 'init()' first?")
+    }
+}
+

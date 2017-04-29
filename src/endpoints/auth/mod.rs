@@ -1,12 +1,13 @@
 use time;
 use rocket_contrib::{JSON, Value};
-use jwt::errors::{ErrorKind};
-use jwt::{encode, decode, Header, Algorithm, Validation};
 
 mod jwt;
 mod facebook;
 mod twitter;
 mod google;
+
+use jwt::errors::{ErrorKind};
+use jwt::{ encode, decode, Header, Algorithm, Validation };
 
 static KEY: &'static str = "secret";
 
@@ -42,13 +43,11 @@ pub fn generate_token(username: User) -> Result<String, errors::Error> {
         user_id: _user_id,
         expires_at: sixty_days_from_now().timestamp()
     };
-    encode(Header::default(), &jwt, key.unwrap().as_ref())
+    encode(&Header::default(), &jwt, key.unwrap().as_ref())
 }
 
-///////////////////////////////////////////////////
-
 /// This is what the refresh token received.
-#[derive(Serialize, Deserialize, Debug)]
+#[derive(Deserialize, Debug)]
 struct Credential {
     accessToken: String
 }
@@ -57,19 +56,17 @@ struct Credential {
 #[post("/refresh_token", format="application/json", data="<access_token>")]
 fn refresh_token(access_token: JSON<Credential>) -> JSON<Value> {
 
-    let decoded_data = match decode::<UserToken>(&access_token,
-                                                 key.as_ref(),
-                                                 Algorithm::HS256,
+    let decoded_data = decode::<UserToken>(&access_token.0.accessToken, KEY.as_ref(), &Validation::default()).unwrap();
 
     JSON(json!({
         "success": true,
-        "access_token": "12345678"
+        "access_token": "12345678",
     }))
     //let token_data = decode::<UserToken>(&access_token, KEY, Algorithm::HS256).unwrap();
 }
 
 /// This is what the oauth function received.
-#[derive(Serialize, Deserialize, Debug)]
+#[derive(Deserialize, Debug)]
 struct OauthCode {
     /// The authorized client code sent from client-side.
     code: String,
@@ -77,7 +74,7 @@ struct OauthCode {
 
 #[post("/auth/facebook", format="application/json", data="<oauth_code>")]
 fn facebook_oauth(oauth_code: JSON<OauthCode>) -> JSON<Value> {
-    let result = match facebook::auth(oauth_code.code.to_owned()) {
+    let result = match facebook::auth(oauth_code.0.code.to_owned()) {
         Ok(token) => json!({
             "success": true,
             "accessToken": token,
@@ -93,7 +90,7 @@ fn facebook_oauth(oauth_code: JSON<OauthCode>) -> JSON<Value> {
 
 #[post("/auth/twitter", format="application/json", data="<oauth_code>")]
 fn twitter_oauth(oauth_code: JSON<OauthCode>) -> JSON<Value> {
-    let result = match twitter::auth(oauth_code.code.to_owned()) {
+    let result = match twitter::auth(oauth_code.0.code.to_owned()) {
         Ok(token) => json!({
             "success": true,
             "accessToken": token

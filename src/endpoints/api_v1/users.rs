@@ -14,8 +14,8 @@ use endpoints::helpers::*;
 use endpoint_error::EndpointResult;
 use endpoints::pagination::Pagination;
 
-use endpoints::api_v1::organizations::{list_organizations, OrganizationProfile};
-use endpoints::api_v1::products::{list_product, ProductProfile};
+//use endpoints::api_v1::organizations::{list_organizations, OrganizationProfile};
+//use endpoints::api_v1::products::{list_product, ProductProfile};
 
 #[derive(Deserialize, Serialize)]
 pub struct UserProfile {
@@ -29,7 +29,7 @@ pub struct UserProfile {
 }
 
 /// Return the user profile for the user profile page.
-#[get("/user/profile/<username>", data="name"format = "application/json")]
+#[get("/user/profile/<username>", data="name", format = "application/json")]
 fn get_profile(db: State<DB>, username: String) -> EndpointResult<JSON<UserProfile>> {
     let conn = &*db.pool().get()?;
 
@@ -39,8 +39,8 @@ fn get_profile(db: State<DB>, username: String) -> EndpointResult<JSON<UserProfi
         user: user.name,
         username: user.username,
         avatar: user.avatar,
-        organization: list_organizations(db, user.username),
-        products: list_product(db, user.username),
+        organization: vec![], //list_organizations(db, user.username),
+        products: vec![], //list_product(db, user.username),
     };
 
     Ok(JSON(profile))
@@ -60,8 +60,8 @@ fn edit_profile(db: State<DB>, req: &Request) -> EndpointResult<JSON<UserProfile
                 user: user.name,
                 username: user.username,
                 avatar: user.avatar,
-                organizations: list_organizations(db, user.username),
-                products: list_product(db, user.username),
+                organizations: vec![], //list_organizations(db, user.username),
+                products: vec![], //list_product(db, user.username),
             };
 
             Ok(JSON(profile))
@@ -69,3 +69,4 @@ fn edit_profile(db: State<DB>, req: &Request) -> EndpointResult<JSON<UserProfile
         None => Response::build().status(Status::Unauthorized).ok()
     }
 }
+

@@ -35,16 +35,16 @@ pub fn generate_token(
 ) -> Result<String, errors::Error>
 {
     let now = time::get_time().sec;
-    let key = env::var("DOBOOM_SECRET_KEY");
+    let key = "secret";
     let jwt = UserToken {
         name: name,
         username: username,
         avatar: avatar,
         iat: now,
         exp: now + TWO_HOURS,
-    }
+    };
 
-    encode(&Header::default(), &jwt, key.unwrap().as_ref())
+    encode(&Header::default(), &jwt, key.as_ref())
 }
 
 /// Decode token, return the payload

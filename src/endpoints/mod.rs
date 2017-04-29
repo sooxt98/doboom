@@ -1,10 +1,11 @@
 pub mod api_v1;
+pub mod auth;
 pub mod pagination;
 
 pub mod helpers {
     use rocket::http::Status;
     use rocket::Response;
-    use rocket_contrib::{Json, Value};
+    use rocket_contrib::{JSON, Value};
     use std::io::Cursor;
 
     pub fn empty_response_with_status<'r>(status: Status) -> Response<'r> {
@@ -13,7 +14,7 @@ pub mod helpers {
 
     pub fn json_response_with_status<'r>(status: Status, json: Value) -> Response<'r> {
         let mut response = empty_response_with_status(status);
-        response.set_sized_body(Cursor::new(Json(json).to_string()));
+        response.set_sized_body(Cursor::new(JSON(json).to_string()));
         response
     }
 
@@ -35,3 +36,4 @@ pub mod helpers {
         json_response_with_status(Status::Ok, json)
     }
 }
+

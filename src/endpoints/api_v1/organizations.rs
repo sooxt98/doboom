@@ -40,7 +40,7 @@ fn get_organization(db: State<DB>, name: String) -> Endpoint<JSON<OrganizationPr
         published: org.published,
         member: vec![],
         products: vec![],
-    }
+    };
 
     Ok(JSON(profile))
 }

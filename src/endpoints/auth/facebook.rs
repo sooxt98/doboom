@@ -1,17 +1,23 @@
 
 use std::env;
-use futures::future;
 use std::str::FromStr;
-use ring::{digest, hmac};
-use serde_json::from_str;
+
+use futures::future;
 use futures::{Future, Stream};
+
+use ring::{digest, hmac};
+
 use hyper_tls::HttpsConnector;
+
 use tokio_core::reactor::Core;
-use hyper::{Uri, Method, Error};
+
+use serde_json::from_str;
 use serde_json::Value as JsonValue;
+
+use hyper::{Uri, Method, Error};
 use hyper::client::{Client, Request};
 use hyper::mime::{Mime, TopLevel, SubLevel, Attr, Value};
-use hyper::header::{Authorization, Accept, UserAgent, qitem};
+use hyper::header::{Authorization, Accept, qitem};
 
 #[derive(Serialize, Deserialize)]
 struct CodeResp {
@@ -51,8 +57,6 @@ pub fn auth(code: String) -> Result<String, String> {
                      vec![(Attr::Charset, Value::Utf8)]))
     ]));
 
-    code_req.headers_mut().set(UserAgent(String::from("Doboom")));
-
     let mut evloop = Core::new().unwrap();
     let handle = evloop.handle();
     let client = Client::configure()
@@ -76,7 +80,7 @@ pub fn auth(code: String) -> Result<String, String> {
                                             ).expect("Invalid result");
 
             let mut graph_req = Request::new(Method::Get, graphApiUri);
-            graph_req.headers_mut().set(UserAgent(String::from("Doboom")));
+
             graph_req.headers_mut().set(Accept(vec![qitem(
                         Mime(TopLevel::Application,
                              SubLevel::Json,
