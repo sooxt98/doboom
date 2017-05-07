@@ -5,7 +5,6 @@
 #![cfg_attr(feature="clippy", plugin(clippy))]
 #![cfg_attr(feature="clippy", allow(needless_pass_by_value))]
 
-
 #[macro_use] extern crate diesel;
 #[macro_use] extern crate diesel_codegen;
 #[macro_use] extern crate lazy_static;
@@ -41,15 +40,16 @@ mod catchers;
 mod endpoints;
 mod endpoint_error;
 
+use std::env;
 use database::Db;
 use endpoints::api_v1;
 // use endpoints::auth;
 
 fn main() {
-    let runtimeConfig = config::parse();
+    let runtime_config = config::parse();
 
     /// Database connector
-    let db_addr = runtimeConfig.postgres.addr.clone();
+    let db_addr = env::var("DATABASE_URL").unwrap();
     let mut db = Db::new(db_addr);
 
     match db.init() {
@@ -75,7 +75,7 @@ fn main() {
                        catchers::forbidden,
                 ])
 
-                .manage(runtimeConfig)
+                .manage(runtime_config)
                 .manage(db)
                 .launch()
         }

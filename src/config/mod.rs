@@ -5,26 +5,34 @@ use dotenv::dotenv;
 use std::env;
 
 #[derive(Debug, Deserialize)]
-pub struct Server {
-    /// Including the port.
-    pub addr: String,
-}
-
-#[derive(Debug, Deserialize)]
-pub struct Postgres {
-    pub addr: String,
-}
-
-#[derive(Debug, Deserialize)]
 pub struct Jwt {
     pub secret: String,
 }
 
 #[derive(Debug, Deserialize)]
+pub struct Facebook {
+    pub app_id: String,
+    pub app_secret: String,
+}
+
+#[derive(Debug, Deserialize)]
+pub struct Google {
+    pub consumer_key: String,
+    pub consumer_secret: String,
+}
+
+#[derive(Debug, Deserialize)]
+pub struct Twitter {
+    pub client_id: String,
+    pub app_secret: String,
+}
+
+#[derive(Debug, Deserialize)]
 pub struct Config {
-    pub server: Server,
-    pub postgres: Postgres,
-    pub jwt: Jwt,
+    pub Jwt: Jwt,
+    pub FacebookOauth: Facebook,
+    pub GoogleOauth: Google,
+    pub TwitterOauth: Twitter,
 }
 
 pub fn parse() -> Config {

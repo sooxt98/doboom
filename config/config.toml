@@ -1,0 +1,14 @@
+[Jwt]
+secret = "1"
+
+[FacebookOauth]
+app_id = "2"
+app_secret = "3"
+
+[GoogleOauth]
+consumer_key = "4"
+consumer_secret = "5"
+
+[TwitterOauth]
+client_id = "6"
+app_secret = "7"
