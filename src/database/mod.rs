@@ -6,8 +6,6 @@ use r2d2::Config;
 use r2d2::{ Pool, InitializationError };
 use r2d2_diesel::ConnectionManager;
 
-use config::DbConfig;
-
 use diesel::result::Error as DieselError;
 use r2d2::GetTimeout;
 
@@ -68,19 +66,19 @@ type DbPool = Pool<ConnectionManager<PgConnection>>;
 
 pub struct Db {
     pub pool: Option<DbPool>,
-    pub config: DbConfig,
+    pub addr: String,
 }
 
 impl Db {
-    pub fn new(config: DbConfig) -> Db {
+    pub fn new(addr: String) -> Db {
         Db {
             pool: None,
-            config: config,
+            addr: addr
         }
     }
 
     pub fn init(&mut self) -> Result<(), DbError> {
-        let db_url = self.config.url();
+        let db_url = self.addr.as_ref();
         let config = Config::default();
         let manager = ConnectionManager::<PgConnection>::new(db_url);
         let pool = Pool::new(config, manager)?;

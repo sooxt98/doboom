@@ -1,6 +1,6 @@
 use time;
 
-mod jwt;
+// mod jwt;
 mod facebook;
 mod twitter;
 mod google;
@@ -13,7 +13,7 @@ use rocket::{State, Response};
 use rocket_contrib::{JSON, Value};
 
 use endpoints::helpers::*;
-use endpoints_error::EndpointResult;
+use endpoint_error::EndpointResult;
 use endpoints::pagination::Pagination;
 
 use jwt::errors::{self, ErrorKind};
@@ -69,15 +69,14 @@ struct Credential {
 
 /// This is used to generate the JWT token, sign in mode
 #[post("/refresh_token", format="application/json", data="<access_token>")]
-fn refresh_token(access_token: JSON<Credential>) -> JSON<Value> {
-
-    let decoded_data = decode::<UserToken>(&access_token.0.accessToken, KEY.as_ref(), &Validation::default()).unwrap();
+fn refresh_token(access_token: JSON<Credential>) -> EndpointResult<JSON<Value>> {
+    let decoded_data = decode::<UserToken>(&access_token.0.accessToken, KEY.as_ref(), &Validation::default())?;
+    let token = generate_token(decoded_data)?;
 
     JSON(json!({
         "success": true,
-        "access_token": "12345678",
+        "access_token": token,
     }))
-    //let token_data = decode::<UserToken>(&access_token, KEY, Algorithm::HS256).unwrap();
 }
 
 /// This is what the oauth function received.
@@ -93,7 +92,6 @@ fn facebook_oauth(oauth_code: JSON<OauthCode>) -> EndpointResult<JSON<Value>> {
         Ok(token) => json!({
             "success": true,
             "accessToken": token,
-            "profile": "unimplemented"
         }),
         Err(reason) => json!({
             "success": false,
@@ -104,7 +102,7 @@ fn facebook_oauth(oauth_code: JSON<OauthCode>) -> EndpointResult<JSON<Value>> {
 }
 
 #[post("/auth/twitter", format="application/json", data="<oauth_code>")]
-fn twitter_oauth(oauth_code: JSON<OauthCode>) -> JSON<Value> {
+fn twitter_oauth(oauth_code: JSON<OauthCode>) -> EndpointResult<JSON<Value>> {
     let result = match twitter::auth(oauth_code.0.code.to_owned()) {
         Ok(token) => json!({
             "success": true,
@@ -119,7 +117,7 @@ fn twitter_oauth(oauth_code: JSON<OauthCode>) -> JSON<Value> {
 }
 
 #[post("/auth/google", format="application/json", data="<oauth_code>")]
-fn google_oauth(oauth_code: JSON<OauthCode>) -> JSON<Value> {
+fn google_oauth(oauth_code: JSON<OauthCode>) -> EndpointResult<JSON<Value>> {
     let result = match google::auth(oauth_code.code.to_owned()) {
         Ok(token) => json!({
             "success": true,
@@ -132,4 +130,3 @@ fn google_oauth(oauth_code: JSON<OauthCode>) -> JSON<Value> {
     };
     JSON(result)
 }
-

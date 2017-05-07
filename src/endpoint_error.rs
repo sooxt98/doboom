@@ -7,7 +7,7 @@ use r2d2::{GetTimeout, InitializationError};
 use rocket::response;
 use rocket::response::Responder;
 
-use db::DbError;
+use database::DbError;
 use endpoints::helpers::*;
 
 pub type EndpointResult<T> = Result<T, EndpointError>;

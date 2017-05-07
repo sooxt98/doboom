@@ -1,9 +1,1 @@
-table! {
-    users {
-        id -> Integer,
-        username -> VarChar,
-        name -> VarChar,
-        email -> VarChar,
-    }
-}
-
+infer_schema!("dotenv:DATABASE_URL");

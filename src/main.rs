@@ -31,35 +31,31 @@ extern crate hyper_tls;
 extern crate futures;
 extern crate tokio_core;
 
-use std::env as std_env;
-use std::str::FromStr;
-
-mod schema;
+// mod schema;
 mod models;
 
 mod config;
-mod env;
-mod db;
+mod database;
 
 mod catchers;
 mod endpoints;
 mod endpoint_error;
 
-use env::Env;
-use config::DbConfig;
-use db::Db;
+use database::Db;
 use endpoints::api_v1;
-use endpoints::auth;
+// use endpoints::auth;
 
 fn main() {
-    let env_str = &std_env::var("DOBOOM_ENV").unwrap_or_else(|_| "development".to_owned());
-    let env = Env::from_str(env_str).unwrap_or_default();
-    let db_config = DbConfig::load(&env).expect("Error loading DB configuration");
-    let mut db = Db::new(db_config);
+    let runtimeConfig = config::parse();
+
+    /// Database connector
+    let db_addr = runtimeConfig.postgres.addr.clone();
+    let mut db = Db::new(db_addr);
 
     match db.init() {
         Ok(_) => {
             rocket::ignite()
+                /*
                 .mount("/", routes![
                        // auth::jwt_auth,
                        auth::refresh_token,
@@ -67,7 +63,7 @@ fn main() {
                        auth::twitter_oauth,
                        auth::facebook_oauth
                 ])
-                
+                */
                 //.mount("/api/v1", routes![
                 //       api_v1::users::hello,
                 //])
@@ -79,6 +75,7 @@ fn main() {
                        catchers::forbidden,
                 ])
 
+                .manage(runtimeConfig)
                 .manage(db)
                 .launch()
         }
