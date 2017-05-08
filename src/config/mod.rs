@@ -4,30 +4,30 @@ use toml;
 use dotenv::dotenv;
 use std::env;
 
-#[derive(Debug, Deserialize)]
+#[derive(Debug, Serialize, Deserialize)]
 pub struct Jwt {
     pub secret: String,
 }
 
-#[derive(Debug, Deserialize)]
+#[derive(Debug, Serialize, Deserialize)]
 pub struct Facebook {
     pub app_id: String,
     pub app_secret: String,
 }
 
-#[derive(Debug, Deserialize)]
+#[derive(Debug, Serialize, Deserialize)]
 pub struct Google {
     pub consumer_key: String,
     pub consumer_secret: String,
 }
 
-#[derive(Debug, Deserialize)]
+#[derive(Debug, Serialize, Deserialize)]
 pub struct Twitter {
     pub client_id: String,
     pub app_secret: String,
 }
 
-#[derive(Debug, Deserialize)]
+#[derive(Debug, Serialize, Deserialize)]
 pub struct Config {
     pub Jwt: Jwt,
     pub FacebookOauth: Facebook,

@@ -24,13 +24,6 @@ struct CodeResp {
     access_token: String,
 }
 
-/*
-#[derive(Serialize, Deserialize)]
-struct GraphResp {
-    
-}
-*/
-
 /// Communicate with the facebook
 pub fn auth(code: String) -> Result<String, String> {
     let client_id = env::var("FACEBOOK_APPID").expect("FACEBOOK_APPID must be set");
@@ -71,7 +64,7 @@ pub fn auth(code: String) -> Result<String, String> {
         }).and_then(|chunks| {
             let s = String::from_utf8(chunks).unwrap();
             let code_result_json: CodeResp = from_str(&s).unwrap();
-            
+
             let hmac = fb_digest(code_result_json.access_token.as_str(), client_secret.as_str());
             let graphApiUri = Uri::from_str(&format!("{}?access_token={}&appsecret_proof={}",
                                                     graphApiUrl

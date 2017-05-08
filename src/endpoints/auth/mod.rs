@@ -1,13 +1,14 @@
 use time;
 
-// mod jwt;
 mod facebook;
 mod twitter;
 mod google;
 
 use diesel::prelude::*;
-use database::models::User;
-use database::schema::users::dsl::*;
+use models::users::User;
+use schema::users::dsl::*;
+
+use config::Config;
 
 use rocket::{State, Response};
 use rocket_contrib::{JSON, Value};
@@ -54,11 +55,11 @@ pub fn generate_token(user: User) -> Result<String, errors::Error> {
     let payload = UserToken {
         name: user.name,
         username: user.username,
-        //avatar: user.avatar,
+        avatar: user.avatar,
         iat: now,
-        exp: now + (60 * 60 * 2) // 2 hours
+        exp: now + (60 * 60 * 24 * 7) // 1 week
     };
-    encode(&Header::default(), &payload, KEY)
+    encode(&Header::default(), &payload, KEY.as_bytes())
 }
 
 /// This is what the refresh token received.
@@ -70,24 +71,34 @@ struct Credential {
 /// This is used to generate the JWT token, sign in mode
 #[post("/refresh_token", format="application/json", data="<access_token>")]
 fn refresh_token(access_token: JSON<Credential>) -> EndpointResult<JSON<Value>> {
-    let decoded_data = decode::<UserToken>(&access_token.0.accessToken, KEY.as_ref(), &Validation::default())?;
-    let token = generate_token(decoded_data)?;
+    let decoded_data = decode::<UserToken>(&access_token.0.accessToken, KEY.as_ref(), &Validation::default()).unwrap();
 
-    JSON(json!({
+    let now = time::get_time().sec;
+    let payload = UserToken {
+        name: decoded_data.claims.name,
+        username: decoded_data.claims.username,
+        avatar: decoded_data.claims.avatar,
+        iat: now,
+        exp: now + (60 * 60 * 24 * 7) // 1 week
+    };
+
+    let token = encode(&Header::default(), &payload, KEY.as_bytes()).unwrap();
+
+    Ok(JSON(json!({
         "success": true,
         "access_token": token,
-    }))
+    })))
 }
 
-/// This is what the oauth function received.
-#[derive(Deserialize, Debug)]
+#[derive(Deserialize)]
 struct OauthCode {
-    /// The authorized client code sent from client-side.
     code: String,
 }
 
 #[post("/auth/facebook", format="application/json", data="<oauth_code>")]
-fn facebook_oauth(oauth_code: JSON<OauthCode>) -> EndpointResult<JSON<Value>> {
+fn facebook_oauth(config: State<Config>, oauth_code: JSON<OauthCode>)
+    -> EndpointResult<JSON<Value>>
+{
     let result = match facebook::auth(oauth_code.0.code.to_owned()) {
         Ok(token) => json!({
             "success": true,
@@ -98,11 +109,13 @@ fn facebook_oauth(oauth_code: JSON<OauthCode>) -> EndpointResult<JSON<Value>> {
             "message": reason
         })
     };
-    JSON(result)
+    Ok(JSON(result))
 }
 
 #[post("/auth/twitter", format="application/json", data="<oauth_code>")]
-fn twitter_oauth(oauth_code: JSON<OauthCode>) -> EndpointResult<JSON<Value>> {
+fn twitter_oauth(config: State<Config>, oauth_code: JSON<OauthCode>)
+    -> EndpointResult<JSON<Value>>
+{
     let result = match twitter::auth(oauth_code.0.code.to_owned()) {
         Ok(token) => json!({
             "success": true,
@@ -113,12 +126,14 @@ fn twitter_oauth(oauth_code: JSON<OauthCode>) -> EndpointResult<JSON<Value>> {
             "message": reason
         })
     };
-    JSON(result)
+    Ok(JSON(result))
 }
 
 #[post("/auth/google", format="application/json", data="<oauth_code>")]
-fn google_oauth(oauth_code: JSON<OauthCode>) -> EndpointResult<JSON<Value>> {
-    let result = match google::auth(oauth_code.code.to_owned()) {
+fn google_oauth(config: State<Config>, oauth_code: JSON<OauthCode>)
+    -> EndpointResult<JSON<Value>>
+{
+    let result = match google::auth(oauth_code.0.code.to_owned()) {
         Ok(token) => json!({
             "success": true,
             "accessToken": token
@@ -128,5 +143,5 @@ fn google_oauth(oauth_code: JSON<OauthCode>) -> EndpointResult<JSON<Value>> {
             "message": reason
         })
     };
-    JSON(result)
+    Ok(JSON(result))
 }

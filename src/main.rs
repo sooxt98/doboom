@@ -16,6 +16,7 @@ extern crate r2d2_diesel;
 extern crate rocket;
 #[macro_use] extern crate rocket_contrib;
 
+extern crate serde;
 extern crate serde_json;
 #[macro_use] extern crate serde_derive;
 
@@ -30,7 +31,7 @@ extern crate hyper_tls;
 extern crate futures;
 extern crate tokio_core;
 
-// mod schema;
+mod schema;
 mod models;
 
 mod config;
@@ -42,8 +43,8 @@ mod endpoint_error;
 
 use std::env;
 use database::Db;
-use endpoints::api_v1;
-// use endpoints::auth;
+// use endpoints::api_v1;
+use endpoints::auth;
 
 fn main() {
     let runtime_config = config::parse();
@@ -53,33 +54,26 @@ fn main() {
     let mut db = Db::new(db_addr);
 
     match db.init() {
-        Ok(_) => {
-            rocket::ignite()
-                /*
-                .mount("/", routes![
-                       // auth::jwt_auth,
-                       auth::refresh_token,
-                       auth::google_oauth,
-                       auth::twitter_oauth,
-                       auth::facebook_oauth
-                ])
-                */
-                //.mount("/api/v1", routes![
-                //       api_v1::users::hello,
-                //])
-
-                .catch(errors![
-                       catchers::not_found,
-                       catchers::bad_request,
-                       catchers::unauthorized,
-                       catchers::forbidden,
-                ])
-
-                .manage(runtime_config)
-                .manage(db)
-                .launch()
-        }
-        Err(reason) => println!("Db initialization error: {}", reason),
+        Ok(_) => (),
+        Err(y) => panic!(y)
     };
+
+    rocket::ignite()
+        .mount("/", routes![
+        // auth::jwt_auth,
+            auth::refresh_token,
+            auth::google_oauth,
+            auth::twitter_oauth,
+            auth::facebook_oauth
+        ])
+        .catch(errors![
+            catchers::not_found,
+            catchers::bad_request,
+            catchers::unauthorized,
+            catchers::forbidden,
+        ])
+        .manage(runtime_config)
+        .manage(db)
+        .launch();
 }
 

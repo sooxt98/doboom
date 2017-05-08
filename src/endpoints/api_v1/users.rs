@@ -1,15 +1,18 @@
-use db::{DB, DbError};
-use diesel::prelude::*;
-use database::models::clicks::Count;
+use database::{Db, DbError};
+use config::Config;
 
-use database::models::User;
-use database::models::UpdatedUser;
-use database::schema::users::dsl::*;
+use diesel::prelude::*;
+
+/*
+use models::User;
+use models::UpdatedUser;
+use schema::users::dsl::*;
+*/
 
 use rocket::{State, Response};
 use rocket_contrib::{JSON, Value};
 
-use auth::decode_token;
+// use auth::decode_token;
 use endpoints::helpers::*;
 use endpoint_error::EndpointResult;
 use endpoints::pagination::Pagination;
@@ -24,10 +27,11 @@ pub struct UserProfile {
 
     pub avatar: Option<String>,
 
-    pub organizations: Vec<OrganizationProfile>,
-    pub products: Vec<ProductProfile>,
+    //pub organizations: Vec<OrganizationProfile>,
+    //pub products: Vec<ProductProfile>,
 }
 
+/*
 /// Return the user profile for the user profile page.
 #[get("/user/profile/<username>", data="name", format = "application/json")]
 fn get_profile(db: State<DB>, username: String) -> EndpointResult<JSON<UserProfile>> {
@@ -70,3 +74,4 @@ fn edit_profile(db: State<DB>, req: &Request) -> EndpointResult<JSON<UserProfile
     }
 }
 
+*/
