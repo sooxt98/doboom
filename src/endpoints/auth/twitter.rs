@@ -1,28 +1,33 @@
 use std::env;
-use futures::future;
 use std::str::FromStr;
-use serde_json::from_str;
+
+use futures::future;
 use futures::{Future, Stream};
-use tokio_core::reactor::Core;
-use hyper_tls::HttpsConnector;
-use hyper::{Uri, Method, Error};
+
+use serde_json::from_str;
 use serde_json::Value as JsonValue;
 
 use base64::encode;
 
+use tokio_core::reactor::Core;
+
+use hyper_tls::HttpsConnector;
+use hyper::{Uri, Method, Error};
 use hyper::client::{Client, Request};
 use hyper::mime::{Mime, TopLevel, SubLevel, Attr, Value};
 use hyper::header::{Accept, Bearer, Basic, Headers, Authorization, ContentType, qitem};
+
+use config::Config;
 
 #[derive(Serialize, Deserialize)]
 struct CodeResp {
     access_token: String,
 }
 
-pub fn auth(code: String) -> Result<String, String> {
-    
-    let consumerKey = env::var("TWITTER_CONSUMERKEY").expect("TWITTER_CONSUMERKEY must be set");
-    let consumerSecret = env::var("TWITTER_CONSUMERSECRET").expect("TWITTER_CONSUMERSECRET must be set");
+pub fn auth(config: &Config, code: String) -> Result<String, String> {
+
+    let consumerKey = &config.TwitterOauth.consumer_key;
+    let consumerSecret = &config.TwitterOauth.consumer_secret;
 
     let accessTokenUrl = Uri::from_str("https://api.twitter.com/oauth2/token").unwrap();
     let accountApiUrl = Uri::from_str("https://api.twitter/1.1/account/verify_credentials.json?include_email=true").unwrap();

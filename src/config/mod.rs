@@ -13,26 +13,28 @@ pub struct Jwt {
 pub struct Facebook {
     pub app_id: String,
     pub app_secret: String,
+    pub redirect_uri: String,
 }
 
 #[derive(Debug, Serialize, Deserialize)]
-pub struct Google {
+pub struct Twitter {
     pub consumer_key: String,
     pub consumer_secret: String,
 }
 
 #[derive(Debug, Serialize, Deserialize)]
-pub struct Twitter {
+pub struct Google {
     pub client_id: String,
     pub app_secret: String,
+    pub redirect_uri: String
 }
 
 #[derive(Debug, Serialize, Deserialize)]
 pub struct Config {
     pub Jwt: Jwt,
     pub FacebookOauth: Facebook,
-    pub GoogleOauth: Google,
     pub TwitterOauth: Twitter,
+    pub GoogleOauth: Google,
 }
 
 pub fn parse() -> Config {

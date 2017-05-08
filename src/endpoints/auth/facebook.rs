@@ -1,4 +1,3 @@
-
 use std::env;
 use std::str::FromStr;
 
@@ -7,17 +6,18 @@ use futures::{Future, Stream};
 
 use ring::{digest, hmac};
 
-use hyper_tls::HttpsConnector;
-
 use tokio_core::reactor::Core;
 
 use serde_json::from_str;
 use serde_json::Value as JsonValue;
 
+use hyper_tls::HttpsConnector;
 use hyper::{Uri, Method, Error};
 use hyper::client::{Client, Request};
 use hyper::mime::{Mime, TopLevel, SubLevel, Attr, Value};
 use hyper::header::{Authorization, Accept, qitem};
+
+use config::Config;
 
 #[derive(Serialize, Deserialize)]
 struct CodeResp {
@@ -25,10 +25,10 @@ struct CodeResp {
 }
 
 /// Communicate with the facebook
-pub fn auth(code: String) -> Result<String, String> {
-    let client_id = env::var("FACEBOOK_APPID").expect("FACEBOOK_APPID must be set");
-    let client_secret = env::var("FACEBOOK_APPSECRET").expect("FACEBOOK_APPSECRET mush be set");
-    let redirect_uri = env::var("REDIRECT_URL").expect("REDIRECT_URI must be set");
+pub fn auth(config: &Config, code: String) -> Result<String, String> {
+    let client_id = &config.FacebookOauth.app_id;
+    let client_secret = &config.FacebookOauth.app_secret;
+    let redirect_uri = &config.FacebookOauth.redirect_uri;
 
     let fields = vec!["email", "id", "last_name", "picture.type(large)"];
     let accessTokenUrl = "https://graph.facebook.com/oauth/access_token";

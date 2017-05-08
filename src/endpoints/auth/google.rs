@@ -1,27 +1,34 @@
 use std::env;
-use futures::future;
 use std::str::FromStr;
-use url::form_urlencoded;
-use serde_json::from_str;
+
+use futures::future;
 use futures::{Future, Stream};
+
+use url::form_urlencoded;
+
+use serde_json::from_str;
+use serde_json::Value as JsonValue;
+
 use tokio_core::reactor::Core;
+
 use hyper_tls::HttpsConnector;
 use hyper::{Uri, Method, Error};
-use serde_json::Value as JsonValue;
 use hyper::client::{Client, Request};
 use hyper::mime::{Mime, TopLevel, SubLevel, Attr, Value};
 use hyper::header::{Accept, Bearer, Headers, Authorization, ContentType, qitem};
+
+use config::Config;
 
 #[derive(Serialize, Deserialize)]
 struct CodeResp {
     access_token: String,
 }
 
-pub fn auth(code: String) -> Result<String, String> {
-    
-    let client_id = env::var("GOOGLE_CLIENTID").expect("GOOGLE_CLIENTID must be set");
-    let client_secret = env::var("GOOGLE_APPSECRET").expect("GOOGLE_APPSECRET must be set");
-    let redirect_uri = env::var("REDIRECT_URL").expect("REDIRECT_URI must be set");
+pub fn auth(config: &Config, code: String) -> Result<String, String> {
+
+    let client_id = &config.GoogleOauth.client_id;
+    let client_secret = &config.GoogleOauth.app_secret;
+    let redirect_uri = &config.GoogleOauth.redirect_uri;
 
     let accessTokenUrl = Uri::from_str("https://accounts.google.com/o/oauth2/token").unwrap();
     let peopleApiUrl = Uri::from_str("https://www.googleapis.com/plus/v1/people/me/openIdConnect").unwrap();
@@ -85,7 +92,7 @@ pub fn auth(code: String) -> Result<String, String> {
             })
         })
     });
-    
+
     let user_profile = evloop.run(worker).unwrap();
 
     println!("user_profile returned from google: {:?}", user_profile);

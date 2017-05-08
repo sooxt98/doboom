@@ -4,11 +4,13 @@ secret = "1"
 [FacebookOauth]
 app_id = "2"
 app_secret = "3"
+redirect_uri = "abc"
 
-[GoogleOauth]
+[TwitterOauth]
 consumer_key = "4"
 consumer_secret = "5"
 
-[TwitterOauth]
+[GoogleOauth]
 client_id = "6"
 app_secret = "7"
+redirect_uri = "abc"

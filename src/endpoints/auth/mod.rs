@@ -20,8 +20,6 @@ use endpoints::pagination::Pagination;
 use jwt::errors::{self, ErrorKind};
 use jwt::{ encode, decode, Header, Algorithm, Validation };
 
-static KEY: &'static str = "secret";
-
 #[derive(Serialize, Deserialize, Debug)]
 struct UserToken {
     name: String,
@@ -50,7 +48,8 @@ impl UserToken {
 }
 
 // Generate_token, creates the jwt key
-pub fn generate_token(user: User) -> Result<String, errors::Error> {
+pub fn generate_token(config: Config, user: User) -> Result<String, errors::Error> {
+    let jwt_secret = config.Jwt.secret;
     let now = time::get_time().sec;
     let payload = UserToken {
         name: user.name,
@@ -59,7 +58,7 @@ pub fn generate_token(user: User) -> Result<String, errors::Error> {
         iat: now,
         exp: now + (60 * 60 * 24 * 7) // 1 week
     };
-    encode(&Header::default(), &payload, KEY.as_bytes())
+    encode(&Header::default(), &payload, jwt_secret.as_bytes())
 }
 
 /// This is what the refresh token received.
@@ -70,8 +69,11 @@ struct Credential {
 
 /// This is used to generate the JWT token, sign in mode
 #[post("/refresh_token", format="application/json", data="<access_token>")]
-fn refresh_token(access_token: JSON<Credential>) -> EndpointResult<JSON<Value>> {
-    let decoded_data = decode::<UserToken>(&access_token.0.accessToken, KEY.as_ref(), &Validation::default()).unwrap();
+fn refresh_token(config: State<Config>, access_token: JSON<Credential>)
+    -> EndpointResult<JSON<Value>>
+{
+    let jwt_secret = &config.Jwt.secret;
+    let decoded_data = decode::<UserToken>(&access_token.0.accessToken, jwt_secret.as_bytes(), &Validation::default()).unwrap();
 
     let now = time::get_time().sec;
     let payload = UserToken {
@@ -82,7 +84,7 @@ fn refresh_token(access_token: JSON<Credential>) -> EndpointResult<JSON<Value>> 
         exp: now + (60 * 60 * 24 * 7) // 1 week
     };
 
-    let token = encode(&Header::default(), &payload, KEY.as_bytes()).unwrap();
+    let token = encode(&Header::default(), &payload, jwt_secret.as_bytes()).unwrap();
 
     Ok(JSON(json!({
         "success": true,
@@ -99,7 +101,7 @@ struct OauthCode {
 fn facebook_oauth(config: State<Config>, oauth_code: JSON<OauthCode>)
     -> EndpointResult<JSON<Value>>
 {
-    let result = match facebook::auth(oauth_code.0.code.to_owned()) {
+    let result = match facebook::auth(&*config, oauth_code.0.code.to_owned()) {
         Ok(token) => json!({
             "success": true,
             "accessToken": token,
@@ -116,7 +118,7 @@ fn facebook_oauth(config: State<Config>, oauth_code: JSON<OauthCode>)
 fn twitter_oauth(config: State<Config>, oauth_code: JSON<OauthCode>)
     -> EndpointResult<JSON<Value>>
 {
-    let result = match twitter::auth(oauth_code.0.code.to_owned()) {
+    let result = match twitter::auth(&*config, oauth_code.0.code.to_owned()) {
         Ok(token) => json!({
             "success": true,
             "accessToken": token
@@ -133,7 +135,7 @@ fn twitter_oauth(config: State<Config>, oauth_code: JSON<OauthCode>)
 fn google_oauth(config: State<Config>, oauth_code: JSON<OauthCode>)
     -> EndpointResult<JSON<Value>>
 {
-    let result = match google::auth(oauth_code.0.code.to_owned()) {
+    let result = match google::auth(&*config, oauth_code.0.code.to_owned()) {
         Ok(token) => json!({
             "success": true,
             "accessToken": token
