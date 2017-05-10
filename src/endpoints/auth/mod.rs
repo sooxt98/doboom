@@ -69,7 +69,7 @@ struct Credential {
 
 /// This is used to generate the JWT token, sign in mode
 #[post("/refresh_token", format="application/json", data="<access_token>")]
-fn refresh_token(config: State<Config>, access_token: JSON<Credential>)
+pub fn refresh_token(config: State<Config>, access_token: JSON<Credential>)
     -> EndpointResult<JSON<Value>>
 {
     let jwt_secret = &config.Jwt.secret;
@@ -98,7 +98,7 @@ struct OauthCode {
 }
 
 #[post("/auth/facebook", format="application/json", data="<oauth_code>")]
-fn facebook_oauth(config: State<Config>, oauth_code: JSON<OauthCode>)
+pub fn facebook_oauth(config: State<Config>, oauth_code: JSON<OauthCode>)
     -> EndpointResult<JSON<Value>>
 {
     let result = match facebook::auth(&*config, oauth_code.0.code.to_owned()) {
@@ -115,7 +115,7 @@ fn facebook_oauth(config: State<Config>, oauth_code: JSON<OauthCode>)
 }
 
 #[post("/auth/twitter", format="application/json", data="<oauth_code>")]
-fn twitter_oauth(config: State<Config>, oauth_code: JSON<OauthCode>)
+pub fn twitter_oauth(config: State<Config>, oauth_code: JSON<OauthCode>)
     -> EndpointResult<JSON<Value>>
 {
     let result = match twitter::auth(&*config, oauth_code.0.code.to_owned()) {
@@ -132,7 +132,7 @@ fn twitter_oauth(config: State<Config>, oauth_code: JSON<OauthCode>)
 }
 
 #[post("/auth/google", format="application/json", data="<oauth_code>")]
-fn google_oauth(config: State<Config>, oauth_code: JSON<OauthCode>)
+pub fn google_oauth(config: State<Config>, oauth_code: JSON<OauthCode>)
     -> EndpointResult<JSON<Value>>
 {
     let result = match google::auth(&*config, oauth_code.0.code.to_owned()) {
