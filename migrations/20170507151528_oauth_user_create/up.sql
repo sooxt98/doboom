@@ -4,5 +4,5 @@ CREATE TABLE users (
     username VARCHAR NOT NULL,
     name VARCHAR NOT NULL,
     email VARCHAR NOT NULL,
-    avatar VARCHAR NOT NULL,
+    avatar VARCHAR NOT NULL
 )

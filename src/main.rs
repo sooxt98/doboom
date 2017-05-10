@@ -43,7 +43,7 @@ mod endpoint_error;
 
 use std::env;
 use database::Db;
-// use endpoints::api_v1;
+use endpoints::api_v1;
 use endpoints::auth;
 
 fn main() {
@@ -60,11 +60,13 @@ fn main() {
 
     rocket::ignite()
         .mount("/", routes![
-        // auth::jwt_auth,
             auth::refresh_token,
             auth::google_oauth,
             auth::twitter_oauth,
             auth::facebook_oauth
+        ])
+        .mount("/api/v1/", routes![
+            api_v1::users::get_profile,
         ])
         .catch(errors![
             catchers::not_found,
