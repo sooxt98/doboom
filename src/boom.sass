@@ -22,19 +22,74 @@ nav
 		list-style: none
 		display: inline-block
 
-	ul.right
-		float: right
+	ul
+		&.right
+			float: right
+		a
+			padding: 0 10px
 
 	li
 		display: inline-block
 
 	a
 		display: inline-block
-		padding: 6px 12px
 		text-decoration: none
 	a.logo
-		font-weight: 600
+		font-weight: 700
 
 	div.wrapper
-		margin: 0 auto
+		margin: 10px auto
 		max-width: 1100px
+
+body
+	.container
+		display: flex
+		max-width: 1100px
+		margin: 20px auto
+		.content
+			width: 68%
+			background: white
+			float: left
+			margin-right: 2%
+
+			.title
+				padding: 10px
+				background: $secondary-color
+				color: white
+				.tab
+					float: right
+					a
+						font-size: 12px
+						padding: 0 .5rem
+						border-right: 1px solid #e8e8e8
+						&:last-child
+							border: 0px
+			.tile
+				display: flex
+				margin: 10px
+				.thumbnail
+					float: left
+					margin-right: 10px
+					width: 80px
+					height: 80px
+					background: grey
+				.tile_content
+					font-size: 14px
+					.tp
+						font-size: 20px
+					.desc
+						padding: 7px 0
+						color: grey
+					.tweet
+						.btn
+							cursor: pointer
+							color: white
+							padding: 5px
+							background: $default-color
+							&:hover
+								background: $primary-color
+
+		.panel
+			width: 30%
+			background: white
+			float: right

@@ -14,16 +14,66 @@ nav {
     display: inline-block; }
   nav ul.right {
     float: right; }
+  nav ul a {
+    padding: 0 10px; }
   nav li {
     display: inline-block; }
   nav a {
     display: inline-block;
-    padding: 6px 12px;
     text-decoration: none; }
   nav a.logo {
-    font-weight: 600; }
+    font-weight: 700; }
   nav div.wrapper {
-    margin: 0 auto;
+    margin: 10px auto;
     max-width: 1100px; }
+
+body .container {
+  display: flex;
+  max-width: 1100px;
+  margin: 20px auto; }
+  body .container .content {
+    width: 68%;
+    background: white;
+    float: left;
+    margin-right: 2%; }
+    body .container .content .title {
+      padding: 10px;
+      background: #585858;
+      color: white; }
+      body .container .content .title .tab {
+        float: right; }
+        body .container .content .title .tab a {
+          font-size: 12px;
+          padding: 0 0.5rem;
+          border-right: 1px solid #e8e8e8; }
+          body .container .content .title .tab a:last-child {
+            border: 0px; }
+    body .container .content .tile {
+      display: flex;
+      margin: 10px; }
+      body .container .content .tile .thumbnail {
+        float: left;
+        margin-right: 10px;
+        width: 80px;
+        height: 80px;
+        background: grey; }
+      body .container .content .tile .tile_content {
+        font-size: 14px; }
+        body .container .content .tile .tile_content .tp {
+          font-size: 20px; }
+        body .container .content .tile .tile_content .desc {
+          padding: 7px 0;
+          color: grey; }
+        body .container .content .tile .tile_content .tweet .btn {
+          cursor: pointer;
+          color: white;
+          padding: 5px;
+          background: #0085cc; }
+          body .container .content .tile .tile_content .tweet .btn:hover {
+            background: #00a2f9; }
+  body .container .panel {
+    width: 30%;
+    background: white;
+    float: right; }
 
 /*# sourceMappingURL=boom.css.map */
