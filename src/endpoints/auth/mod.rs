@@ -21,18 +21,18 @@ use jwt::errors::{self, ErrorKind};
 use jwt::{ encode, decode, Header, Algorithm, Validation };
 
 #[derive(Serialize, Deserialize, Debug)]
-struct UserToken {
-    name: String,
+pub struct UserToken {
+    pub name: String,
     // Username is the only key, drop hashids maybe ?
-    username: String,
-    avatar: String,
+    pub username: String,
+    pub avatar: String,
     //verified: bool,
     /// Prevent faked accounts.
     //swag_verified: Option<bool>,
     /// Issued at
-    iat: i64,
+    pub iat: i64,
     /// Expiry datetime
-    exp: i64,
+    pub exp: i64,
 }
 
 // only has_role() is used in this demo
@@ -63,8 +63,8 @@ pub fn generate_token(config: Config, user: User) -> Result<String, errors::Erro
 
 /// This is what the refresh token received.
 #[derive(Deserialize, Debug)]
-struct Credential {
-    accessToken: String
+pub struct Credential {
+    pub accessToken: String
 }
 
 /// This is used to generate the JWT token, sign in mode
@@ -93,8 +93,8 @@ pub fn refresh_token(config: State<Config>, access_token: JSON<Credential>)
 }
 
 #[derive(Deserialize)]
-struct OauthCode {
-    code: String,
+pub struct OauthCode {
+    pub code: String,
 }
 
 #[post("/auth/facebook", format="application/json", data="<oauth_code>")]
