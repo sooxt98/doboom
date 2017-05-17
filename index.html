@@ -11,6 +11,7 @@
 	<link rel="manifest" href="#/manifest.json">
 	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/7.0.0/normalize.css" />
 	<link rel="stylesheet" href="css/boom.css" />
+	<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
 
 </head>
 
@@ -18,10 +19,12 @@
 	<nav>
 		<div class="wrapper">
 			<a class="logo">Doboom</a>
+			<form>
+				<input type="text" name="search" placeholder="Search..">
+			</form>
 			<ul class="right">
-				<li><a>test</a></li>
-				<li><a>test</a></li>
-				<li class="item"><a>test</a></li>
+				<li><a>Login</a></li>
+				<li><a>Register</a></li>
 			</ul>
 		</div>
 	</nav>
@@ -35,19 +38,133 @@
 					<a>Latest</a>
 				</div>
 			</div>
-			<div class="tile">
+			<div class="tile" id="myBtn">
+				<div class="thumbnail"><img src="https://ph-files.imgix.net/946e0327-32e6-460e-8870-3feb1420e04d?auto=format&auto=compress&codec=mozjpeg&cs=strip&w=80&h=80&fit=crop"
+					/></div>
+				<div class="tile_content">
+					<div class="tp">Giftmoji</div>
+					<div class="desc">Turn bitmojis, stickers & photos into digital gift cards</div>
+					<div class="tweet">
+						<div class="badge">Tech</div>
+						<div class="msg">24</div>
+						<div class="vote">54</div>
+					</div>
+				</div>
+			</div>
+			<div class="tile" id="myBtn">
+				<div class="thumbnail"><img src="https://ph-files.imgix.net/19c886ab-e3bc-4f0d-8e3e-e930c5af8218?auto=format&auto=compress&codec=mozjpeg&cs=strip&w=80&h=80&fit=crop"
+					/></div>
+				<div class="tile_content">
+					<div class="tp">GiftHead</div>
+					<div class="desc">Find curated gift ideas from +500 stores near your location</div>
+					<div class="tweet">
+						<div class="badge">Game</div>
+						<div class="msg">12</div>
+						<div class="vote">23</div>
+					</div>
+				</div>
+			</div>
+			<div class="tile" id="myBtn">
 				<div class="thumbnail"></div>
 				<div class="tile_content">
 					<div class="tp">test</div>
 					<div class="desc">This is Just a Test~!</div>
-					<div class="tweet"><div class="btn">Button here</div></div>
+					<div class="tweet">
+						<div class="badge">Lifestyle</div>
+						<div class="msg">1</div>
+						<div class="vote">5</div>
+					</div>
 				</div>
 			</div>
 		</div>
 		<div class="panel">
-			Hey Panel~
+
+			<div class="feed-panel">
+			<div class="title">Feeds</div>
+			<div class="feed">
+						<div class="tile">
+							<div class="thumbnail"></div><div class="text">Tech</div>
+						</div>
+						<div class="tile">
+							<div class="thumbnail"></div><div class="text">Game</div>
+						</div>
+						<div class="tile">
+							<div class="thumbnail"></div><div class="text">Books</div>
+						</div>
+						<div class="tile">
+							<div class="thumbnail"></div><div class="text">Liftstyle</div>
+						</div>
+			</div>
+			</div>
+
+
+			<div class="feed-panel">
+			<div class="title">Favorite</div>
+			<div class="feed">
+						<div class="tile">
+							<div class="thumbnail"></div><div class="text">Tech</div>
+						</div>
+						<div class="tile">
+							<div class="thumbnail"></div><div class="text">Game</div>
+						</div>
+						<div class="tile">
+							<div class="thumbnail"></div><div class="text">Books</div>
+						</div>
+						<div class="tile">
+							<div class="thumbnail"></div><div class="text">Liftstyle</div>
+						</div>
+			</div>
+			</div>
+
+
 		</div>
+
 	</div>
+
+
+
+
+	<!-- The Modal -->
+<div id="myModal" class="modal">
+
+  <!-- Modal content -->
+  <div class="modal-content">
+    <span class="close">&times;</span>
+    			<div class="tile" id="myBtn">
+				<div class="thumbnail"><img src="https://ph-files.imgix.net/946e0327-32e6-460e-8870-3feb1420e04d?auto=format&auto=compress&codec=mozjpeg&cs=strip&w=80&h=80&fit=crop"
+					/>
+  </div>
+
+</div>
+
+
+<script>
+// Get the modal
+var modal = document.getElementById('myModal');
+
+// Get the button that opens the modal
+var btn = document.getElementById("myBtn");
+
+// Get the <span> element that closes the modal
+var span = document.getElementsByClassName("close")[0];
+
+// When the user clicks the button, open the modal 
+btn.onclick = function() {
+    modal.style.display = "block";
+}
+
+// When the user clicks on <span> (x), close the modal
+span.onclick = function() {
+    modal.style.display = "none";
+}
+
+// When the user clicks anywhere outside of the modal, close it
+window.onclick = function(event) {
+    if (event.target == modal) {
+        modal.style.display = "none";
+    }
+}
+</script>
 </body>
 
 </html>

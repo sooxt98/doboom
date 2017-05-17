@@ -1,3 +1,4 @@
+@charset "UTF-8";
 html, body {
   background: #f9f9f9;
   color: #282828;
@@ -17,15 +18,32 @@ nav {
   nav ul a {
     padding: 0 10px; }
   nav li {
+    line-height: 24px;
     display: inline-block; }
   nav a {
     display: inline-block;
     text-decoration: none; }
   nav a.logo {
-    font-weight: 700; }
+    font-weight: 700;
+    line-height: 24px; }
   nav div.wrapper {
-    margin: 10px auto;
+    margin: 0 auto;
+    display: flex;
     max-width: 1100px; }
+  nav form {
+    display: inline-block;
+    margin: 0 auto; }
+  nav input[type=text] {
+    width: 300px;
+    margin: 0 auto;
+    box-sizing: border-box;
+    border: 0;
+    font-size: 14px;
+    background-color: white;
+    background-image: url("searchicon.png");
+    background-position: 10px 10px;
+    background-repeat: no-repeat;
+    padding: 5px; }
 
 body .container {
   display: flex;
@@ -44,19 +62,17 @@ body .container {
         float: right; }
         body .container .content .title .tab a {
           font-size: 12px;
-          padding: 0 0.5rem;
-          border-right: 1px solid #e8e8e8; }
+          padding-left: 0.5rem; }
           body .container .content .title .tab a:last-child {
             border: 0px; }
     body .container .content .tile {
-      display: flex;
       margin: 10px; }
       body .container .content .tile .thumbnail {
         float: left;
         margin-right: 10px;
         width: 80px;
         height: 80px;
-        background: grey; }
+        background: whitesmoke; }
       body .container .content .tile .tile_content {
         font-size: 14px; }
         body .container .content .tile .tile_content .tp {
@@ -64,16 +80,81 @@ body .container {
         body .container .content .tile .tile_content .desc {
           padding: 7px 0;
           color: grey; }
-        body .container .content .tile .tile_content .tweet .btn {
+        body .container .content .tile .tile_content .tweet .vote, body .container .content .tile .tile_content .tweet .msg {
+          float: right;
+          display: inline-block;
+          min-width: 35px;
+          margin-left: 15px; }
+        body .container .content .tile .tile_content .tweet .msg:before {
+          display: inline-block;
+          font-family: "Material Icons";
+          content: "";
+          vertical-align: middle;
+          padding-right: 2px; }
+        body .container .content .tile .tile_content .tweet .vote:before {
+          display: inline-block;
+          font-family: "Material Icons";
+          content: "";
+          vertical-align: middle;
+          padding-right: 2px; }
+        body .container .content .tile .tile_content .tweet .badge {
+          display: inline-block;
           cursor: pointer;
           color: white;
           padding: 5px;
           background: #0085cc; }
-          body .container .content .tile .tile_content .tweet .btn:hover {
+          body .container .content .tile .tile_content .tweet .badge:hover {
             background: #00a2f9; }
   body .container .panel {
     width: 30%;
-    background: white;
     float: right; }
+    body .container .panel .feed-panel {
+      margin-bottom: 10px;
+      background: white;
+      padding: 10px; }
+      body .container .panel .feed-panel .title {
+        padding: 10px; }
+      body .container .panel .feed-panel .feed .tile {
+        font-size: 14px;
+        padding: 4px 10px; }
+        body .container .panel .feed-panel .feed .tile .thumbnail {
+          float: left;
+          height: 20px;
+          width: 20px;
+          background: whitesmoke;
+          display: inline-block;
+          margin-right: 10px; }
+        body .container .panel .feed-panel .feed .tile .text {
+          line-height: 20px; }
+
+.modal {
+  display: none;
+  position: fixed;
+  z-index: 1;
+  padding-top: 100px;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  overflow: auto;
+  background-color: black;
+  background-color: rgba(0, 0, 0, 0.4); }
+
+.modal-content {
+  background-color: #fefefe;
+  margin: auto;
+  padding: 20px;
+  border: 1px solid #888;
+  width: 80%; }
+
+.close {
+  color: #aaaaaa;
+  float: right;
+  font-size: 28px;
+  font-weight: bold; }
+  .close:hover, .close:focus {
+    color: #000;
+    text-decoration: none;
+    cursor: pointer; }
 
 /*# sourceMappingURL=boom.css.map */

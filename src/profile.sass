@@ -1,0 +1,121 @@
+$back-color: #f9f9f9
+$primary-color: #00a2f9
+$secondary-color: #585858
+$font-color: #282828
+$default-color: #0085cc
+
+html,body
+	background: $back-color
+	color: $font-color
+	font-family: -apple-system,BlinkMacSystemFont,Segoe UI,Helvetica,Arial,sans-serif
+
+
+nav
+	background: $primary-color
+	color: white
+	padding: 10px
+
+	ul
+		margin: 0
+		padding: 0
+		list-style: none
+		display: inline-block
+
+	ul
+		&.right
+			float: right
+		a
+			padding: 0 10px
+
+	li
+		line-height: 24px
+		display: inline-block
+
+	a
+		display: inline-block
+		text-decoration: none
+	a.logo
+		font-weight: 700
+		line-height: 24px
+
+	div.wrapper
+		margin: 0 auto
+		display: flex
+		max-width: 1100px
+
+	form
+		display: inline-block
+		margin: 0 auto
+		
+	input[type=text]
+		width: 300px
+		margin: 0 auto
+		box-sizing: border-box
+		border: 0
+		font-size: 14px
+		background-color: white
+		background-image: url('searchicon.png')
+		background-position: 10px 10px
+		background-repeat: no-repeat
+		padding: 5px
+
+
+body
+	.cover
+		width: 100%
+		overflow: hidden
+		background: gray
+		height: 300px
+	.container
+		display: flex
+		max-width: 1100px
+		margin: 20px auto
+		.user
+
+			width: 100%
+			margin: -235px 50px 0 50px
+			.thumbnail
+				background: white
+				border-radius: 50%
+				width: 120px
+				height: 120px
+				float: left
+			.status
+				border-radius: 50%
+				width: 20px
+				height: 20px
+				background: lightgreen
+				margin: 0px 0 0 105px
+			.name
+				float:left
+				margin: 40px
+				display: inline-block
+				color: black
+				font-size: 20px
+				.username
+					font-size: 14px
+					color: $font-color
+			.tab
+				background: rgba(255, 255, 255, 0.58)
+				display: inline-block
+				padding: 0 10px
+				margin: 30px 0
+				float: right
+				.item
+					text-align: center
+					display: inline-block
+					margin: 10px
+					font-size: 18px
+					border-radius: 50%
+					span
+						color: black
+					.title
+						color: white
+						text-align: center
+						font-size: 14px
+
+
+
+					
+				
+		

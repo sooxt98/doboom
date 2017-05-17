@@ -1,0 +1,98 @@
+html, body {
+  background: #f9f9f9;
+  color: #282828;
+  font-family: -apple-system, BlinkMacSystemFont, Segoe UI, Helvetica, Arial, sans-serif; }
+
+nav {
+  background: #00a2f9;
+  color: white;
+  padding: 10px; }
+  nav ul {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    display: inline-block; }
+  nav ul.right {
+    float: right; }
+  nav ul a {
+    padding: 0 10px; }
+  nav li {
+    line-height: 24px;
+    display: inline-block; }
+  nav a {
+    display: inline-block;
+    text-decoration: none; }
+  nav a.logo {
+    font-weight: 700;
+    line-height: 24px; }
+  nav div.wrapper {
+    margin: 0 auto;
+    display: flex;
+    max-width: 1100px; }
+  nav form {
+    display: inline-block;
+    margin: 0 auto; }
+  nav input[type=text] {
+    width: 300px;
+    margin: 0 auto;
+    box-sizing: border-box;
+    border: 0;
+    font-size: 14px;
+    background-color: white;
+    background-image: url("searchicon.png");
+    background-position: 10px 10px;
+    background-repeat: no-repeat;
+    padding: 5px; }
+
+body .cover {
+  width: 100%;
+  overflow: hidden;
+  background: gray;
+  height: 300px; }
+body .container {
+  display: flex;
+  max-width: 1100px;
+  margin: 20px auto; }
+  body .container .user {
+    width: 100%;
+    margin: -235px 50px 0 50px; }
+    body .container .user .thumbnail {
+      background: white;
+      border-radius: 50%;
+      width: 120px;
+      height: 120px;
+      float: left; }
+    body .container .user .status {
+      border-radius: 50%;
+      width: 20px;
+      height: 20px;
+      background: lightgreen;
+      margin: 0px 0 0 105px; }
+    body .container .user .name {
+      margin: 40px;
+      display: inline-block;
+      color: black;
+      font-size: 20px; }
+      body .container .user .name .username {
+        font-size: 14px;
+        color: #282828; }
+    body .container .user .tab {
+      background: rgba(255, 255, 255, 0.58);
+      display: inline-block;
+      padding: 0 10px;
+      margin: 30px 0;
+      float: right; }
+      body .container .user .tab .item {
+        text-align: center;
+        display: inline-block;
+        margin: 10px;
+        font-size: 18px;
+        border-radius: 50%; }
+        body .container .user .tab .item span {
+          color: black; }
+        body .container .user .tab .item .title {
+          color: white;
+          text-align: center;
+          font-size: 14px; }
+
+/*# sourceMappingURL=profile.css.map */
