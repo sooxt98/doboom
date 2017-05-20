@@ -1,3 +1,4 @@
+@charset "UTF-8";
 html, body {
   background: #f9f9f9;
   color: #282828;
@@ -49,50 +50,132 @@ body .cover {
   overflow: hidden;
   background: gray;
   height: 300px; }
-body .container {
-  display: flex;
-  max-width: 1100px;
-  margin: 20px auto; }
-  body .container .user {
-    width: 100%;
-    margin: -235px 50px 0 50px; }
-    body .container .user .thumbnail {
+  body .cover .user {
+    padding: 90px 130px;
+    display: flex; }
+    body .cover .user .thumbnail {
       background: white;
       border-radius: 50%;
       width: 120px;
       height: 120px;
-      float: left; }
-    body .container .user .status {
+      margin-right: 20px; }
+    body .cover .user .status {
       border-radius: 50%;
       width: 20px;
       height: 20px;
       background: lightgreen;
       margin: 0px 0 0 105px; }
-    body .container .user .name {
-      margin: 40px;
-      display: inline-block;
-      color: black;
+    body .cover .user .name {
+      display: flex;
+      flex-flow: column;
+      flex: 1;
+      justify-content: center;
+      color: white;
       font-size: 20px; }
-      body .container .user .name .username {
-        font-size: 14px;
-        color: #282828; }
-    body .container .user .tab {
-      background: rgba(255, 255, 255, 0.58);
-      display: inline-block;
+      body .cover .user .name .username {
+        font-size: 14px; }
+    body .cover .user .tab {
+      display: flex;
+      background: rgba(255, 255, 255, 0.18);
       padding: 0 10px;
       margin: 30px 0;
-      float: right; }
-      body .container .user .tab .item {
+      width: 250px; }
+      body .cover .user .tab .item {
+        flex: 1;
         text-align: center;
-        display: inline-block;
         margin: 10px;
         font-size: 18px;
         border-radius: 50%; }
-        body .container .user .tab .item span {
+        body .cover .user .tab .item span {
           color: black; }
-        body .container .user .tab .item .title {
+        body .cover .user .tab .item .title {
           color: white;
           text-align: center;
           font-size: 14px; }
+body .container {
+  display: flex;
+  max-width: 1100px;
+  margin: 20px auto; }
+  body .container .panel-mid {
+    flex: 1;
+    margin-right: 20px; }
+    body .container .panel-mid .content {
+      background: white; }
+      body .container .panel-mid .content .title {
+        padding: 10px;
+        background: #585858;
+        color: white; }
+        body .container .panel-mid .content .title .tab {
+          float: right; }
+          body .container .panel-mid .content .title .tab a {
+            font-size: 12px;
+            padding-left: 0.5rem; }
+            body .container .panel-mid .content .title .tab a:last-child {
+              border: 0px; }
+      body .container .panel-mid .content .tile {
+        padding: 10px; }
+        body .container .panel-mid .content .tile .thumbnail {
+          float: left;
+          margin-right: 10px;
+          width: 80px;
+          height: 80px;
+          background: whitesmoke; }
+        body .container .panel-mid .content .tile .tile_content {
+          font-size: 14px; }
+          body .container .panel-mid .content .tile .tile_content .tp {
+            font-size: 20px; }
+          body .container .panel-mid .content .tile .tile_content .desc {
+            padding: 7px 0;
+            color: grey; }
+          body .container .panel-mid .content .tile .tile_content .tweet .vote, body .container .panel-mid .content .tile .tile_content .tweet .msg {
+            float: right;
+            display: inline-block;
+            min-width: 35px;
+            margin-left: 15px; }
+          body .container .panel-mid .content .tile .tile_content .tweet .msg:before {
+            display: inline-block;
+            font-family: "Material Icons";
+            content: "";
+            vertical-align: middle;
+            padding-right: 2px; }
+          body .container .panel-mid .content .tile .tile_content .tweet .vote:before {
+            display: inline-block;
+            font-family: "Material Icons";
+            content: "";
+            vertical-align: middle;
+            padding-right: 2px; }
+          body .container .panel-mid .content .tile .tile_content .tweet .badge {
+            display: inline-block;
+            cursor: pointer;
+            color: white;
+            padding: 5px;
+            background: #0085cc; }
+            body .container .panel-mid .content .tile .tile_content .tweet .badge:hover {
+              background: #00a2f9; }
+  body .container .panel-left {
+    width: 270px; }
+  body .container .panel-right {
+    width: 200px;
+    margin-right: 20px; }
+  body .container .panel-left, body .container .panel-right {
+    overflow: hidden; }
+    body .container .panel-left .feed-panel, body .container .panel-right .feed-panel {
+      margin-bottom: 10px;
+      background: white;
+      padding: 10px; }
+      body .container .panel-left .feed-panel .title, body .container .panel-right .feed-panel .title {
+        padding: 10px; }
+      body .container .panel-left .feed-panel .feed .tile, body .container .panel-right .feed-panel .feed .tile {
+        font-size: 14px;
+        padding: 4px 10px; }
+        body .container .panel-left .feed-panel .feed .tile .thumbnail, body .container .panel-right .feed-panel .feed .tile .thumbnail {
+          float: left;
+          height: 20px;
+          width: 20px;
+          background: whitesmoke;
+          display: inline-block;
+          margin-right: 10px; }
+        body .container .panel-left .feed-panel .feed .tile .text, body .container .panel-right .feed-panel .feed .tile .text {
+          line-height: 20px; }
 
 /*# sourceMappingURL=profile.css.map */
